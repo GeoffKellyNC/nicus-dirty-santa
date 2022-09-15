@@ -4,6 +4,8 @@ import './App.css';
 
 import Home from './views/Home'
 import GameBoard from './views/GameBoard'
+import Register from './views/Register'
+import PlayerBoard from './views/PlayerBoard'
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
       <Routes>
         <Route path = '/' element = {<Home />}/>
         <Route path = '/gameboard' element = {<GameBoard />}/>
+        <Route path = '/register' element = {<Register />} />
+        <Route path = '/playerboard' element = {<PlayerBoard />} />
       </Routes>
     </div>
   );

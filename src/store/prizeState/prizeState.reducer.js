@@ -7,7 +7,7 @@ export function prizes(state = [], action) {
         case types.GET_PRIZES:
             return action.payload;
         case types.SET_PRIZE:
-            return action.payload;
+            return [...state, action.payload];
         default:
             return state
     }

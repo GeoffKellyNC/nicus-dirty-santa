@@ -17,7 +17,7 @@ const Home = () => {
             </div>
             <div className='player choice-container'>
                 <span className='player-text'>Players</span>
-                <button onClick={() => navigate('/players')} className='player-btn'>Click Here</button>
+                <button onClick={() => navigate('/register')} className='player-btn'>Click Here</button>
             </div>
         </div>
     </HomeStyled>
@@ -28,7 +28,7 @@ export default Home
 
 
 const HomeStyled = styled.div`
-    background: ${pr => pr.theme.colors.background};
+    background: ${pr => pr.theme.colors.gradients.red_green_sides};
     height: 100vh;
     overflow-y: hidden;
 

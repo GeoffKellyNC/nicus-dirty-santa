@@ -1,7 +1,11 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
     colors: {
-        background: "linear-gradient(90deg, rgba(0,116,42,1) 0%, rgba(28,25,25,1) 5%, rgba(28,25,25,1) 95%, rgba(230,0,0,1) 100%);"
+        background_black: '#1C1919',
+        green: '#41a30b',
+        gradients: {
+            red_green_sides: "linear-gradient(90deg, rgba(0,116,42,1) 0%, rgba(28,25,25,1) 5%, rgba(28,25,25,1) 95%, rgba(230,0,0,1) 100%);",
+        }
     },
     fonts: {
         family: {
@@ -18,7 +22,7 @@ export default {
         },
         color: {
             red: '#F80003',
-            green: '#00ed53'
+            green: '#41a30b'
         }
     }
 }
