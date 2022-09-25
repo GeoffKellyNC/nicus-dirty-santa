@@ -1,3 +1,4 @@
 export const GET_PLAYERS = 'GET_PLAYERS'
 export const SET_PLAYER = 'SET_PLAYER'
 export const SET_PLAYER_DATA = 'SET_PLAYER_DATA'
+export const SET_PRIZE_PLAYER = 'SET_PRIZE_PLAYER'

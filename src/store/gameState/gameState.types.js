@@ -1,0 +1,2 @@
+export const START_GAME = 'START_GAME'
+export const SET_CURRENT_TURN = 'SET_CURRENT_TURN'

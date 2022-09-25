@@ -3,6 +3,7 @@ export default {
     colors: {
         background_black: '#1C1919',
         green: '#41a30b',
+        red: '#F80003',
         gradients: {
             red_green_sides: "linear-gradient(90deg, rgba(0,116,42,1) 0%, rgba(28,25,25,1) 5%, rgba(28,25,25,1) 95%, rgba(230,0,0,1) 100%);",
         }

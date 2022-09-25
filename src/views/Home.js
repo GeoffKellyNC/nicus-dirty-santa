@@ -2,6 +2,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
+import RejoinGame from '../components/home/RejoinGame.form'
+
 const Home = () => {
 
     const navigate = useNavigate()
@@ -9,6 +11,9 @@ const Home = () => {
     <HomeStyled>
         <div className='home-header'>
             <h1 className='home-title'> NICUS DIRTY CHRISTMAS </h1>
+            <button onClick={() => {
+                localStorage.clear()
+            }}> Clear Storage </button>
         </div>
         <div className = 'home-body'>
             <div className='game-master choice-container'>
@@ -19,6 +24,7 @@ const Home = () => {
                 <span className='player-text'>Players</span>
                 <button onClick={() => navigate('/register')} className='player-btn'>Click Here</button>
             </div>
+            <RejoinGame />
         </div>
     </HomeStyled>
   )

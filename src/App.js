@@ -6,6 +6,7 @@ import Home from './views/Home'
 import GameBoard from './views/GameBoard'
 import Register from './views/Register'
 import PlayerBoard from './views/PlayerBoard'
+import MasterPrizes from './views/MasterPrizes';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path = '/gameboard' element = {<GameBoard />}/>
         <Route path = '/register' element = {<Register />} />
         <Route path = '/playerboard' element = {<PlayerBoard />} />
+        <Route path = '/masterprizes' element = {<MasterPrizes />} />
       </Routes>
     </div>
   );

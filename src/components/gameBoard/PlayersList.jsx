@@ -3,6 +3,11 @@ import Player from './Player'
 import styled from 'styled-components'
 
 const PlayersList = ({players}) => {
+
+
+
+
+
   return (
     <PlayersStyled>
         <span className='players-header-text'>Players</span>
@@ -22,9 +27,9 @@ export default PlayersList
 
 const PlayersStyled = styled.div`
     background: red;
-    width: 14%;
+    width: 18em;
     border-radius: 15px;
-    height: 300px;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;

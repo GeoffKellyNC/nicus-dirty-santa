@@ -1,18 +1,23 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import * as playerActions from '../store/playerState/playerState.actions'
+import * as gameActions from '../store/gameState/gameState.actions'
 
 import AddPrizeForm from '../components/gameBoard/AddPrize.form'
 import PlayersList from '../components/gameBoard/PlayersList'
 import PlayerOrder from '../components/gameBoard/PlayerOrder'
+import CurrentGame from '../components/gameBoard/CurrentGame'
 
 const GameBoard = (props) => {
   const { players, getPlayers } = props
 
+  const nav = useNavigate()
+
   useEffect(() => {
     getPlayers()
-  },[getPlayers, players])
+  },[getPlayers])
 
 
   return (
@@ -20,15 +25,19 @@ const GameBoard = (props) => {
       <div className='gameboard-header'>
         <h1 className='gameboard-text'>Nicus Dirty Santa GameBoard</h1>
       </div>
+      <button onClick={() => nav('/masterprizes')}> View Prizes </button>
       <div className='gameboard-body'>
         <div className='gameboard-right'>
           <PlayersList players = {players} />
         </div>
+        <div className='gameboard-middle'>
+          <CurrentGame />
+        </div>
         <div className='gameboard-left'>
           <PlayerOrder players = {players} />
         </div>
-        <AddPrizeForm />
       </div>
+      <AddPrizeForm />
     </GameBoardStyled>
   )
 }
@@ -39,7 +48,7 @@ const mapStateToProps = state => {
   })
 }
 
-export default connect(mapStateToProps, playerActions) (GameBoard)
+export default connect(mapStateToProps, {...playerActions, ...gameActions}) (GameBoard)
 
 const GameBoardStyled = styled.div`
   background: ${pr => pr.theme.colors.background_black};
@@ -54,6 +63,13 @@ const GameBoardStyled = styled.div`
     font-family: ${pr => pr.theme.fonts.family.christmas};
     font-size: ${pr => pr.theme.fonts.size.heading};
     color: ${pr => pr.theme.fonts.color.green};
+  }
+
+  .gameboard-body {
+    display: flex;
+    justify-content: space-between;
+    ${'' /* margin: 2%; */}
+
   }
 
 

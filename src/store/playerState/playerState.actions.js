@@ -42,3 +42,4 @@ export const getPlayers = () => async dispatch => {
 
     }
 }
+
