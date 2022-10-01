@@ -21,6 +21,8 @@ const RejoinGame = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         const { userName, pin} = formValues
+        userName.trim()
+        pin.trim()
         const rejoin = await rejoinGame(userName, pin)
         setFormValues({userName: '', pin: ''})
         if(!rejoin){

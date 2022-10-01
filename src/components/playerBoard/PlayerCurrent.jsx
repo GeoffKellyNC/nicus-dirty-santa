@@ -7,6 +7,7 @@ const PlayerCurrent = (props) => {
     const { playerData, prizes, getPlayers } = props
     const [ currentPrize, setCurrentPrize ] = useState(null)
 
+
     useEffect(() => {
         setCurrentPrize(prizes.length < 1 ? null : prizes.find(prize => prize.prize_id === playerData.player_current_prize))
         getPlayers()

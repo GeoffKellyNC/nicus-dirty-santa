@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as playerTypes from './playerState.types';
 
+
 const SET_PLAYER_EP = 'http://localhost:9001/player/setPlayer'
 const GET_PLAYERS_EP = 'http://localhost:9001/player/getPlayers'
 
@@ -10,7 +11,7 @@ export const setPlayer = (playerName, pin) => async (dispatch) => {
         const setPlayerRes = await axios.post(SET_PLAYER_EP, { data: {playerName, pin}})
         const newPlayer = setPlayerRes.data.message
 
-        localStorage.setItem('playerData', JSON.stringify(newPlayer))
+        localStorage.setItem('playerId', newPlayer.player_id)
 
         dispatch({
             type: playerTypes.SET_PLAYER,
@@ -40,6 +41,25 @@ export const getPlayers = () => async dispatch => {
     } catch (error) {
         console.log('PlayerState.actions getPlayers Error: ', error)
 
+    }
+}
+
+export const refreshPlayerData = (playerId) => async dispatch => {
+    try {
+        const newDataRes = await  axios.post('http://localhost:9001/player/getSinglePlayer', { data: { playerId }})
+
+        const newData = newDataRes.data.message
+
+        console.log('newData: ', newData)
+
+
+
+        dispatch({
+            type: playerTypes.REFRESH_PLAYER_DATA,
+            payload: newData
+        })
+    } catch (error) {
+        console.log('PlayerState.actions refreshPlayerData Error: ', error)
     }
 }
 

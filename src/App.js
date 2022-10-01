@@ -9,6 +9,8 @@ import PlayerBoard from './views/PlayerBoard'
 import MasterPrizes from './views/MasterPrizes';
 
 function App() {
+
+
   return (
     <div className="App">
       <Routes>

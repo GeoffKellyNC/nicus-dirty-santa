@@ -9,14 +9,26 @@ import PlayerCurrent from '../components/playerBoard/PlayerCurrent'
 import PlayerActions from '../components/playerBoard/PlayerActions.jsx'
 
 const PlayerBoard = (props) => {
-    const { players, playerData, getAllPrizes } = props
+    const { players, playerData, getAllPrizes, refreshPlayerData } = props
+
 
 
     const nav = useNavigate()
 
+
+   
+
     useEffect(() => {
       getAllPrizes()
     }, [getAllPrizes])
+
+    useEffect(() => {
+      refreshPlayerData(localStorage.getItem('playerId'))
+    }, [])
+
+    setTimeout(() => {
+      refreshPlayerData(localStorage.getItem('playerId'))
+    }, 3000);
 
 
   return (
