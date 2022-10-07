@@ -1,7 +1,6 @@
 import * as types from './playerState.types';
 
 
-
 export function players(state = [], action) {
     switch(action.type){
         case types.GET_PLAYERS:
