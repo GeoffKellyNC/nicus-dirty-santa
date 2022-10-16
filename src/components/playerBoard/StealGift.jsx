@@ -54,10 +54,11 @@ const StealGift = ({
                   </span>
                 </div>
                 <button
+                  className="steal-gift-button"
                   onClick={() =>
                     handleSteal(gift.prize_id, gift.prize_current_owner)
                   }
-                > STEAL </button>
+                > STEAL GIFT </button>
               </div>
             );
           })

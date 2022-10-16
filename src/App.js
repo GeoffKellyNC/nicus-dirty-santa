@@ -9,22 +9,25 @@ import PlayerBoard from './views/PlayerBoard'
 import MasterPrizes from './views/MasterPrizes';
 
 import socketIOClient from "socket.io-client";
+import { connect } from 'react-redux'
+import * as gameActions from './store/gameState/gameState.actions'
 
 
 
 
 
-console.log('App.js')
 
 
-function App() {
+function App (props) {
+  const { setIoSocket } = props
 
   const ENDPOINT = "http://localhost:9001";
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
+    setIoSocket(socket)
     
-  }, []);
+  }, [setIoSocket]);
 
   return (
     <div className="App">
@@ -39,4 +42,5 @@ function App() {
   );
 }
 
-export default App;
+
+export default connect(null, gameActions) (App);

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
     colors: {
-        background_black: '#1C1919',
+        background_black: '#00c5ff',
         green: '#41a30b',
         red: '#F80003',
         gradients: {

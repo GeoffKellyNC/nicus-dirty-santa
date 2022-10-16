@@ -19,3 +19,22 @@ export function currentTurn (state = null, action){
             return state
     }
 }
+
+export function ioSocket (state = null, action){
+    switch(action.type){
+        case types.SET_SOCKET:
+            return action.payload
+        default:
+            return state
+    }
+}
+
+export function gameData (state = null, action){
+    switch(action.type){
+        case types.SET_GAME_DATA:
+            return action.payload
+        default:
+            return state
+    }
+}
+

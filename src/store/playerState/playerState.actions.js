@@ -50,7 +50,6 @@ export const refreshPlayerData = (playerId) => async dispatch => {
 
         const newData = newDataRes.data.message
 
-        console.log('newData: ', newData)
 
 
 

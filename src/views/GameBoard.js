@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
@@ -10,14 +10,58 @@ import PlayersList from '../components/gameBoard/PlayersList'
 import PlayerOrder from '../components/gameBoard/PlayerOrder'
 import CurrentGame from '../components/gameBoard/CurrentGame'
 
+
+
 const GameBoard = (props) => {
-  const { players, getPlayers } = props
+  const { players, getPlayers, ioSocket, startGame  } = props
+  const [started, setStarted] = useState(false)
+  const [ moveMade, setMoveMade ] = useState(false)
+  const [playerMove, setPlayerMove] = useState({player: '', prize: ''})
 
   const nav = useNavigate()
 
+  setTimeout(() => {
+    (() => {
+      console.log('ioSocket: ', ioSocket)
+      ioSocket.on('startGame', (data) => {
+        setStarted(true)
+      })
+      ioSocket.on('giftChosen', (data) => {
+        console.log('GiftChosen', data)
+        console.log('IT WORKED!!!!') //!REMOVE
+        setPlayerMove({...playerMove, player: data.playerName, prize: data.giftName})
+        setMoveMade(true)
+      })
+    })()
+  }, 1000);
+
+
   useEffect(() => {
     getPlayers()
+
+    // setTimeout(() => {
+    //   ioSocket.on('startGame', (data) => {
+    //     setStarted(true)
+    //   })
+    //   ioSocket.on('giftChosen', (data) => {
+    //     console.log('GiftChosen', data)
+    //     console.log('IT WORKED!!!!') //!REMOVE
+    //     setPlayerMove({...playerMove, player: data.playerName, prize: data.giftName})
+    //     setMoveMade(true)
+    //   })
+    // }, 1000);
+
   },[getPlayers])
+
+
+
+  const handleStart = async () => {
+    const gameId = await startGame()
+    ioSocket.emit('startGame', { gameId })
+    
+  }
+
+
 
 
   return (
@@ -37,14 +81,22 @@ const GameBoard = (props) => {
           <PlayerOrder players = {players} />
         </div>
       </div>
+      {
+        started ? <span> Started! </span> : <span> Not Started! </span>
+      }
+      <button onClick = {handleStart}> Start Game </button>
       <AddPrizeForm />
+      {
+        moveMade && <span> {playerMove.player} chose {playerMove.prize} </span>
+      }
     </GameBoardStyled>
   )
 }
 
 const mapStateToProps = state => {
   return({
-    players: state.players
+    players: state.players,
+    ioSocket: state.ioSocket
   })
 }
 

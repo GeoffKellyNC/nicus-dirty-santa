@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-const AvailableGifts = ({prizes, setPlayerPrize, setChooseGiftToggle, playerData }) => {
+const AvailableGifts = ({
+  prizes, 
+  setPlayerPrize, 
+  setChooseGiftToggle, 
+  playerData, 
+  ioSocket }) => {
+
     const [ availableGifts, setAvailableGifts] = useState([])
 
 
@@ -11,6 +17,13 @@ const AvailableGifts = ({prizes, setPlayerPrize, setChooseGiftToggle, playerData
 
     const chooseGift = async (giftId, playerId) => {
         await setPlayerPrize(giftId, playerId)
+        const playerName = playerData.player_name
+        const giftName = prizes.find(prize => prize.prize_id === giftId).prize_name
+        console.log('playerName', playerName) //!REMOVE
+        console.log('giftName', giftName) //!REMOVE
+        await ioSocket.emit('sendGiftChosen', {playerName, giftName})
+        await ioSocket.emit('moveMade')
+
         setChooseGiftToggle(false)
     }
     

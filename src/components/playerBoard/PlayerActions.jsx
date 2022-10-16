@@ -8,7 +8,14 @@ import AvailableGifts from "./AvailableGifts";
 import StealGift from "./StealGift";
 
 const PlayerActions = (props) => {
-  const { prizes, playerData, setPlayerPrize, players, stealPrize } = props;
+  const { 
+    prizes,
+    playerData, 
+    setPlayerPrize, 
+    players, 
+    stealPrize,
+    ioSocket } = props;
+
   const [steal, setSteal] = useState(false);
   const [chooseGiftToggle, setChooseGiftToggle] = useState(false);
 
@@ -31,7 +38,11 @@ const PlayerActions = (props) => {
   return (
     <PlayerActionsStyled>
       <div>
-        <button onClick={handleChooseGiftToggle}> Choose Gift </button>
+        {
+          playerData.player_current_prize ? 
+          <button className = 'choose-gift-btn' disabled onClick={handleChooseGiftToggle}> Choose Gift </button> :
+          <button className = 'choose-gift-btn' onClick={handleChooseGiftToggle}> Choose Gift </button>
+        }
         <button onClick={handleStealGiftToggle}>Steal Gift</button>
       </div>
       {chooseGiftToggle && (
@@ -40,6 +51,7 @@ const PlayerActions = (props) => {
           setPlayerPrize={setPlayerPrize}
           setChooseGiftToggle={setChooseGiftToggle}
           playerData={playerData}
+          ioSocket = {ioSocket}
         />
       )}
       {steal && (
@@ -60,6 +72,7 @@ const mapStateToProps = (state) => {
     prizes: state.prizes,
     playerData: state.playerData,
     players: state.players,
+    ioSocket: state.ioSocket
   };
 };
 
