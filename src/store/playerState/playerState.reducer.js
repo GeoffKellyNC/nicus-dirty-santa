@@ -45,7 +45,7 @@ export function playerData(state = {}, action) {
                 player_prize: action.payload.prizeId
             }
         case types.REFRESH_PLAYER_DATA:
-            return action.payload
+            return action.payload ? action.payload : state
         default:
             return localStorage.getItem('playerData') ? JSON.parse(localStorage.getItem('playerData')) : state
     }

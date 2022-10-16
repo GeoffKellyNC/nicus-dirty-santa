@@ -26,16 +26,14 @@ const PlayerBoard = (props) => {
     const nav = useNavigate()
 
     const refreshData = () => {
-      console.log('Refreshing Data')
-      const playerData = localStorage.getItem('playerData')
-      const playerId = JSON.parse(playerData).player_id
+      const playerData = JSON.parse(localStorage.getItem('PlayerData'))
+      const playerId = playerData.player_id
       refreshPlayerData(playerId)
     }
 
     setTimeout(() => {
       (() => {
         try {
-          console.log('Player Board socket', ioSocket) //!REMOVE
           ioSocket.on('startGame', (data) => {
           console.log('startGame', data) //!REMOVE
           setGameStatus(true)
@@ -59,11 +57,12 @@ const PlayerBoard = (props) => {
 
 
     useEffect(() => {
+      refreshData()
       getAllPrizes()
       refreshGameData()
       refreshPlayerData()
 
-    }, [getAllPrizes, refreshGameData, refreshPlayerData])
+    }, [])
 
     // setTimeout(() => {
     //   refreshPlayerData(localStorage.getItem('playerId'))
