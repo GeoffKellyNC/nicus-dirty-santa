@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route, Routes } from "react-router-dom";
 import './App.css';
 
@@ -8,8 +8,26 @@ import Register from './views/Register'
 import PlayerBoard from './views/PlayerBoard'
 import MasterPrizes from './views/MasterPrizes';
 
-function App() {
+import socketIOClient from "socket.io-client";
+import { connect } from 'react-redux'
+import * as gameActions from './store/gameState/gameState.actions'
 
+
+
+
+
+
+
+function App (props) {
+  const { setIoSocket } = props
+
+  const ENDPOINT = "http://localhost:9001";
+
+  useEffect(() => {
+    const socket = socketIOClient(ENDPOINT);
+    setIoSocket(socket)
+    
+  }, [setIoSocket]);
 
   return (
     <div className="App">
@@ -24,4 +42,5 @@ function App() {
   );
 }
 
-export default App;
+
+export default connect(null, gameActions) (App);

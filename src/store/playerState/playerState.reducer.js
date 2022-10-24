@@ -1,7 +1,6 @@
 import * as types from './playerState.types';
 
 
-
 export function players(state = [], action) {
     switch(action.type){
         case types.GET_PLAYERS:
@@ -46,10 +45,9 @@ export function playerData(state = {}, action) {
                 player_prize: action.payload.prizeId
             }
         case types.REFRESH_PLAYER_DATA:
-            console.log('Refreshing User Data') //!REMOVE
-            return action.payload
+            return action.payload ? action.payload : state
         default:
-            return state
+            return localStorage.getItem('playerData') ? JSON.parse(localStorage.getItem('playerData')) : state
     }
 }
 

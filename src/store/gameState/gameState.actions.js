@@ -4,18 +4,27 @@ import axios from 'axios'
 
 const START_GAME_EP = 'http://localhost:9001/game/startGame'
 const REJOIN_GAME_EP = 'http://localhost:9001/game/rejoinGame'
+const SET_PLAYER_ORDER_EP = 'http://localhost:9001/game/setPlayerOrder'
 
 export const startGame = () => async (dispatch) => {
     try {
-        const res = axios.post(START_GAME_EP, { data: {message: 'startGame'}})
-        const gameId = res.data.message
+        const res = await axios.post(START_GAME_EP, { data: {message: 'startGame'}})
+        const gameData = res.data.message
 
-        localStorage.setItem('gameId', gameId)
+        localStorage.setItem('gameId', gameData.game_id)
+        localStorage.setItem('gameStatus', gameData.game_status)
         localStorage.setItem('gameStatus', true)
         dispatch({
             type: gameTypes.START_GAME,
             payload: true
         })
+
+        dispatch({
+            type: gameTypes.SET_GAME_DATA,
+            payload: gameData
+        })
+
+        return gameData
 
 
     } catch (error) {
@@ -23,14 +32,61 @@ export const startGame = () => async (dispatch) => {
     }
 }
 
+export const setGameData = (gameData) => async (dispatch) => {
+    try {
+        dispatch({
+            type: gameTypes.SET_GAME_DATA,
+            payload: gameData
+        })
+    } catch (error) {
+        console.log('gameStateActions setGameData Error: ', error)
+    }
+}
+
+export const refreshGameData = (gameId) => async (dispatch) => {
+    try {
+        const res = await axios.post('http://localhost:9001/game/getGameData', { data: { gameId }})
+        const gameData = res.data.message
+
+        if (gameData){
+            dispatch({
+                type: gameTypes.SET_GAME_DATA,
+                payload: gameData
+            })
+            return
+        }
+        dispatch({
+            type: gameTypes.SET_GAME_DATA,
+            payload: null
+        })
+
+    } catch (error) {
+        console.log('gameStateActions refreshGameData Error: ', error)
+    }
+}
+
+export const setLocalCurrentTurn = (currentTurn) => async (dispatch) => {
+    try {
+        dispatch({
+            type: gameTypes.SET_CURRENT_TURN,
+            payload: currentTurn
+        })
+    } catch (error) {
+        console.log('gameStateActions setLocalCurrentTurn Error: ', error)
+    }
+}
+
+
 export const setCurrentTurn = (playerId, gameId) => async (dispatch) => {
     try{
-        const res = await axios.post('http://localhost:9001/game/setCurrentTurn', {data: {playerId, gameId}})
+        console.log('Player ID: ', playerId) //!REMOVE
+        console.log('Game ID: ', gameId) //!REMOVE
+        const res = await axios.post('http://localhost:9001/game/setPlayerTurn', {data: {playerId, gameId}})
         const currentTurn = res.data.message
 
         dispatch({
             type: gameTypes.SET_CURRENT_TURN,
-            payload: currentTurn
+            payload: playerId
         })
     } catch (error) {
         console.log('gameStateActions setCurrentTurn Error: ', error)
@@ -40,7 +96,6 @@ export const setCurrentTurn = (playerId, gameId) => async (dispatch) => {
 
 export const rejoinGame = (userName, pin) => async (dispatch) => {
     const rejoinRes = await axios.post(REJOIN_GAME_EP, { data: {userName, pin}})
-    console.log('ReJoin Res:', rejoinRes.status) //!REMOVE
     const playerData = rejoinRes.data.message
 
     if(playerData === 401) return false
@@ -52,8 +107,29 @@ export const rejoinGame = (userName, pin) => async (dispatch) => {
         type: playerTypes.SET_PLAYER_DATA,
         payload: playerData
     })
-    console.log('Rejoin Res', playerData) //! REMOVE
 
     return true
 
+}
+
+export const setIoSocket = (socket) => async (dispatch) => {
+    dispatch({
+        type: gameTypes.SET_SOCKET,
+        payload: socket
+    })
+}
+
+export const setPlayerOrder = (playerArray, gameId) => async (dispatch) => {
+    try {
+        console.log('gameState.actions gameId: ', gameId) //! REMOVE
+        const res = await axios.post(SET_PLAYER_ORDER_EP, { data: {playerArray, gameId}})
+        const playerOrder = res.data.message
+
+        dispatch({
+            type: gameTypes.SET_PLAYER_ORDER,
+            payload: playerOrder
+        })
+    } catch (error) {
+        console.log('gameStateActions setPlayerOrder Error: ', error)
+    }
 }

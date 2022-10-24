@@ -5,16 +5,19 @@ import * as gameActions from '../../store/gameState/gameState.actions'
 
 const CurrentGame = (props) => {
     const { gameStatus, currentTurn, players } = props
-    const [currentPlayerName, setCurrentPlayerName] = ('')
+
+
+    const getPlayerName = (playerId) => {
+        if(players.length < 1) return 'No Player'
+        const playerName = players.filter(player => player.player_id === playerId)[0].player_name
+        return playerName
+    }
 
 
     useEffect(() => {
-        const playerName = players.find(player => player.player_id === currentTurn)
-        if(playerName){
-            setCurrentPlayerName(playerName.player_name)
-        }
+        
     
-    }, [currentTurn, players])
+    }, [])
 
 
 
@@ -27,7 +30,7 @@ const CurrentGame = (props) => {
         </div>
         <div>
             {
-                currentTurn ? <span>{currentPlayerName}</span> : <span>NO PLAYER</span>
+                currentTurn ? <span> {getPlayerName(currentTurn)}</span> : <span>NO PLAYER</span>
             }
         </div>
     </CurrentGameStyled>
@@ -49,6 +52,7 @@ export default connect(mapStateToProps, gameActions) (CurrentGame)
 const CurrentGameStyled = styled.div`
     background: ${pr => pr.theme.colors.green};
     width: calc(100% + 200px);
+    color: black;
 
 
 

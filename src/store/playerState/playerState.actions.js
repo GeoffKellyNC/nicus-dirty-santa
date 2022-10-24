@@ -12,6 +12,7 @@ export const setPlayer = (playerName, pin) => async (dispatch) => {
         const newPlayer = setPlayerRes.data.message
 
         localStorage.setItem('playerId', newPlayer.player_id)
+        localStorage.setItem('PlayerData', JSON.stringify(newPlayer))
 
         dispatch({
             type: playerTypes.SET_PLAYER,
@@ -50,14 +51,13 @@ export const refreshPlayerData = (playerId) => async dispatch => {
 
         const newData = newDataRes.data.message
 
-        console.log('newData: ', newData)
-
 
 
         dispatch({
             type: playerTypes.REFRESH_PLAYER_DATA,
             payload: newData
         })
+
     } catch (error) {
         console.log('PlayerState.actions refreshPlayerData Error: ', error)
     }
