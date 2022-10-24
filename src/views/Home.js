@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import RejoinGame from '../components/home/RejoinGame.form'
 
 const Home = () => {
+    const [rejoin, setRejoin] = useState(false)
 
     const navigate = useNavigate()
   return (
@@ -17,14 +18,13 @@ const Home = () => {
         </div>
         <div className = 'home-body'>
             <div className='game-master choice-container'>
-                <span className='game-master-text'>Game Master</span>
-                <button onClick ={() => navigate('/gameboard')} className='game-master-btn'> Click Here </button>
+                <button onClick ={() => navigate('/gameboard')} className='game-master-btn choice-btn'> GAME MASTER </button>
+                <button onClick={() => navigate('/register')} className='player-btn choice-btn'> PLAYERS </button>
+                <button onClick = {() => setRejoin(!rejoin)} className = 'rejoin-btn choice-btn'> REJOIN </button>
+                {
+                    rejoin && <RejoinGame />
+                }
             </div>
-            <div className='player choice-container'>
-                <span className='player-text'>Players</span>
-                <button onClick={() => navigate('/register')} className='player-btn'>Click Here</button>
-            </div>
-            <RejoinGame />
         </div>
     </HomeStyled>
   )
@@ -34,9 +34,10 @@ export default Home
 
 
 const HomeStyled = styled.div`
-    background: ${pr => pr.theme.colors.gradients.red_green_sides};
     height: 100vh;
     overflow-y: hidden;
+    background: rgb(255,255,255);
+    background: linear-gradient(0deg, rgba(255,255,255,1) 6%, rgba(0,211,230,1) 61%);   
 
 
 
@@ -58,22 +59,41 @@ const HomeStyled = styled.div`
         display: flex;
         color: white;
         justify-content: space-around;
-        height: 100%;
+        height: 50%;
+        width: 100%
+
+        
     }
 
     .choice-container {
-        background: black;
-        padding: 1rem;
-        border: 1px solid red;
         display: flex;
         flex-direction: column;
-        width: 20%;
-        height: 20%;
-        justify-content: flex-start;
-        align-items: center;
+        justify-content: space-around;
         font-family: ${pr => pr.theme.fonts.family.nicus};
         font-size: ${pr => pr.theme.fonts.size.large};
         color: ${pr => pr.theme.fonts.color.green};
+    }
+
+    .choice-btn {
+        width: 350px;
+        height: 100px;
+        font-family: ${pr => pr.theme.fonts.family.nicus};
+        font-size: ${pr => pr.theme.fonts.size.large};
+        background: rgba( 255, 255, 255, 0.25 );
+        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+        backdrop-filter: blur( 4px );
+        -webkit-backdrop-filter: blur( 4px );
+        border-radius: 10px;
+        border: 1px solid rgba( 255, 255, 255, 0.18 );
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            background: rgba( 255, 255, 255, 0.35 );
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.47 );
+            backdrop-filter: blur( 6px );
+            scale: 1.1;
+        }
+
     }
 
 

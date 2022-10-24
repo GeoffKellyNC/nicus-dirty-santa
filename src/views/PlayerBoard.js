@@ -17,9 +17,12 @@ const PlayerBoard = (props) => {
       refreshPlayerData,
       ioSocket,
       gameData,
-      refreshGameData } = props
+      refreshGameData,
+      gameStatus,
+      setGameData,
+      setLocalCurrentTurn } = props
 
-      const [gameStatus, setGameStatus] = useState(false)
+      const [gameStatusLocal, setGameStatusLocal] = useState(localStorage.getItem('gameData') || false)
 
 
 
@@ -35,15 +38,32 @@ const PlayerBoard = (props) => {
       (() => {
         try {
           ioSocket.on('startGame', (data) => {
-          console.log('startGame', data) //!REMOVE
-          setGameStatus(true)
+          localStorage.setItem('gameData', JSON.stringify(data.gameData))
+          setGameStatusLocal(true)
+          setGameData(data.gameData)
         })
   
         ioSocket.on('moveMade', (data) => {
-          console.log('moveMade Refreshing') //!REMOVE
           refreshData()
           refreshGameData()
           refreshPlayerData()
+        })
+        ioSocket.on('gameData', (data) => {
+          localStorage.setItem('gameData', JSON.stringify(data))
+        })
+        ioSocket.on('shuffled', (data) => {
+          localStorage.setItem('shuffledPlayers', JSON.stringify(data.shuffledPlayers))
+          localStorage.setItem('currentTurn' , JSON.stringify(data.shuffledPlayers[0].playerId))
+        })
+        ioSocket.on('sendNextPlayer', (data) => {
+          const { playerId } = data
+          setLocalCurrentTurn(playerId)
+          localStorage.setItem('currentTurn', JSON.stringify(playerId))
+
+        })
+        ioSocket.on('sendPlayerOrder', (data) => {
+          const { playerList } = data
+          localStorage.setItem('shuffledPlayers', JSON.stringify(playerList))
         })
         } catch (error) {
           console.log(error)
@@ -76,7 +96,7 @@ const PlayerBoard = (props) => {
         <div className='player-board-header'>
           <span> Welcome {playerData.player_name} to Nicus Dirty Santa</span>
           {
-            gameStatus ? 
+            gameStatusLocal || gameStatus ? 
             <h1 className='playerboard-text'>Game is in progress</h1>
             :
             <h1 className='playerboard-text'>Waiting for game to start</h1>
@@ -93,7 +113,8 @@ const mapStateToProps = state => {
         players: state.players,
         playerData: state.playerData,
         ioSocket: state.ioSocket,
-        gameData: state.gameData
+        gameData: state.gameData,
+        gameStatus: state.gameStatus
       })
 }
 

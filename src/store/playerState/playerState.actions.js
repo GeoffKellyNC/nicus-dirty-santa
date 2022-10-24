@@ -52,6 +52,7 @@ export const refreshPlayerData = (playerId) => async dispatch => {
         const newData = newDataRes.data.message
 
 
+
         dispatch({
             type: playerTypes.REFRESH_PLAYER_DATA,
             payload: newData

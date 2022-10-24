@@ -6,10 +6,13 @@ const StealGift = ({
   playerData,
   players,
   stealPrize,
-  stealToggle
+  stealToggle,
+  stealNextPlayer
 }) => {
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
+
+  console.log('Gifts To Steal: ', giftsToSteal) //!REMOVE
 
   useEffect(() => {
     setGiftsToSteal(
@@ -21,6 +24,7 @@ const StealGift = ({
   const handleSteal = async (giftId, oldPlayerId) => {
     const newPlayerId = playerData.player_id;
     await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
+    await stealNextPlayer(oldPlayerId);
     stealToggle(false);
   };
 
@@ -31,7 +35,7 @@ const StealGift = ({
           <span className="no-gifts-text"> No Gifts Set! </span>
         ) : (
           giftsToSteal.map((gift, idx) => {
-            if (gift.prize_id === playerData.player_current_prize){
+            if (giftsToSteal.length < 1 || gift.prize_id === playerData.player_current_prize){
               return null
             }
             return (

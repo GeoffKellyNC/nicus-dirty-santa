@@ -7,6 +7,7 @@ import { gameStatus } from './gameState/gameState.reducer'
 import { currentTurn } from './gameState/gameState.reducer'
 import { ioSocket } from './gameState/gameState.reducer';
 import { gameData } from './gameState/gameState.reducer';
+import { playerOrder } from './gameState/gameState.reducer';
 
 
 
@@ -18,5 +19,6 @@ export default combineReducers({
     gameStatus,
     currentTurn,
     ioSocket,
-    gameData
+    gameData,
+    playerOrder
 })

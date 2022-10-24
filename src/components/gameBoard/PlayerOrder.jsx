@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
-const PlayerOrder = ({players}) => {
+const PlayerOrder = ({players, setPlayerOrder, gameData, ioSocket}) => {
     const [shuffled, setShuffled] = useState(false)
     const [shuffledPlayers, setShuffledPlayers] = useState([])
 
 
-    const shufflePlayers = () => {
-        const playerNames = players.map(player => player.player_name)
+    const shufflePlayers = async () => {
+        const playerNames = players.map(player => { 
+            return {
+                    playerName: player.player_name, 
+                    playerId: player.player_id
+                }
+            })
         const shuffledNames = playerNames.sort(() => Math.random() - 0.5)
         setShuffledPlayers(shuffledNames)
         localStorage.setItem('shuffledPlayers', JSON.stringify(shuffledNames))
+        localStorage.setItem('currentTurn', JSON.stringify(shuffledNames[0].playerId))
+        await ioSocket.emit('shuffled', {shuffledNames})
+        await setPlayerOrder(shuffledNames, gameData.game_id)
         setShuffled(true)
     }
 
@@ -21,9 +29,8 @@ const PlayerOrder = ({players}) => {
         }
     }
     , [])
+
     
-
-
   return (
     <Order>
         <button onClick={() => shufflePlayers()}>Shuffle Players</button>
@@ -31,7 +38,7 @@ const PlayerOrder = ({players}) => {
             { !shuffled ? 'Not Shuffled':
                 shuffledPlayers.map((player, idx) => {
                 return (
-                    <div className='player-name-text' key={idx}>{player}</div>
+                    <div className='player-name-text' key={idx}>{player.playerName}</div>
                 )
             })}
         </div>

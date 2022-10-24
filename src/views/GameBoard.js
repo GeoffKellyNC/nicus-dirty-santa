@@ -13,7 +13,7 @@ import CurrentGame from '../components/gameBoard/CurrentGame'
 
 
 const GameBoard = (props) => {
-  const { players, getPlayers, ioSocket, startGame  } = props
+  const { players, getPlayers, ioSocket, startGame, playerOrder, setPlayerOrder, gameData, setLocalCurrentTurn  } = props
   const [started, setStarted] = useState(false)
   const [ moveMade, setMoveMade ] = useState(false)
   const [playerMove, setPlayerMove] = useState({player: '', prize: ''})
@@ -24,13 +24,19 @@ const GameBoard = (props) => {
     (() => {
       console.log('ioSocket: ', ioSocket)
       ioSocket.on('startGame', (data) => {
+        localStorage.setItem('gameData', JSON.stringify(data.gameData))
         setStarted(true)
       })
       ioSocket.on('giftChosen', (data) => {
         console.log('GiftChosen', data)
-        console.log('IT WORKED!!!!') //!REMOVE
         setPlayerMove({...playerMove, player: data.playerName, prize: data.giftName})
         setMoveMade(true)
+      })
+      ioSocket.on('sendNextPlayer', (data) => {
+        const { playerId } = data
+        console.log('sendNextPlayer', data) //!REMOVE
+        setLocalCurrentTurn(playerId)
+        localStorage.setItem('currentTurn', JSON.stringify(playerId))
       })
     })()
   }, 1000);
@@ -39,25 +45,13 @@ const GameBoard = (props) => {
   useEffect(() => {
     getPlayers()
 
-    // setTimeout(() => {
-    //   ioSocket.on('startGame', (data) => {
-    //     setStarted(true)
-    //   })
-    //   ioSocket.on('giftChosen', (data) => {
-    //     console.log('GiftChosen', data)
-    //     console.log('IT WORKED!!!!') //!REMOVE
-    //     setPlayerMove({...playerMove, player: data.playerName, prize: data.giftName})
-    //     setMoveMade(true)
-    //   })
-    // }, 1000);
-
   },[getPlayers])
 
 
 
   const handleStart = async () => {
-    const gameId = await startGame()
-    ioSocket.emit('startGame', { gameId })
+    const gameData = await startGame()
+    ioSocket.emit('startGame', { gameId: gameData.game_id, gameData })
     
   }
 
@@ -75,10 +69,15 @@ const GameBoard = (props) => {
           <PlayersList players = {players} />
         </div>
         <div className='gameboard-middle'>
-          <CurrentGame />
+          <CurrentGame ioSocket = { ioSocket } />
         </div>
         <div className='gameboard-left'>
-          <PlayerOrder players = {players} />
+          <PlayerOrder 
+            players = {players} 
+            setPlayerOrder = { setPlayerOrder }
+            gameData = { gameData } 
+            ioSocket = { ioSocket }
+            />
         </div>
       </div>
       {
@@ -96,7 +95,9 @@ const GameBoard = (props) => {
 const mapStateToProps = state => {
   return({
     players: state.players,
-    ioSocket: state.ioSocket
+    ioSocket: state.ioSocket,
+    playerOrder: state.playerOrder,
+    gameData: state.gameData
   })
 }
 

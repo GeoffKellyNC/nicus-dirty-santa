@@ -4,6 +4,7 @@ import axios from 'axios'
 
 const START_GAME_EP = 'http://localhost:9001/game/startGame'
 const REJOIN_GAME_EP = 'http://localhost:9001/game/rejoinGame'
+const SET_PLAYER_ORDER_EP = 'http://localhost:9001/game/setPlayerOrder'
 
 export const startGame = () => async (dispatch) => {
     try {
@@ -23,11 +24,22 @@ export const startGame = () => async (dispatch) => {
             payload: gameData
         })
 
-        return gameData.game_id
+        return gameData
 
 
     } catch (error) {
         console.log('gameStateActions startGame Error: ', error)
+    }
+}
+
+export const setGameData = (gameData) => async (dispatch) => {
+    try {
+        dispatch({
+            type: gameTypes.SET_GAME_DATA,
+            payload: gameData
+        })
+    } catch (error) {
+        console.log('gameStateActions setGameData Error: ', error)
     }
 }
 
@@ -53,14 +65,28 @@ export const refreshGameData = (gameId) => async (dispatch) => {
     }
 }
 
+export const setLocalCurrentTurn = (currentTurn) => async (dispatch) => {
+    try {
+        dispatch({
+            type: gameTypes.SET_CURRENT_TURN,
+            payload: currentTurn
+        })
+    } catch (error) {
+        console.log('gameStateActions setLocalCurrentTurn Error: ', error)
+    }
+}
+
+
 export const setCurrentTurn = (playerId, gameId) => async (dispatch) => {
     try{
-        const res = await axios.post('http://localhost:9001/game/setCurrentTurn', {data: {playerId, gameId}})
+        console.log('Player ID: ', playerId) //!REMOVE
+        console.log('Game ID: ', gameId) //!REMOVE
+        const res = await axios.post('http://localhost:9001/game/setPlayerTurn', {data: {playerId, gameId}})
         const currentTurn = res.data.message
 
         dispatch({
             type: gameTypes.SET_CURRENT_TURN,
-            payload: currentTurn
+            payload: playerId
         })
     } catch (error) {
         console.log('gameStateActions setCurrentTurn Error: ', error)
@@ -91,4 +117,19 @@ export const setIoSocket = (socket) => async (dispatch) => {
         type: gameTypes.SET_SOCKET,
         payload: socket
     })
+}
+
+export const setPlayerOrder = (playerArray, gameId) => async (dispatch) => {
+    try {
+        console.log('gameState.actions gameId: ', gameId) //! REMOVE
+        const res = await axios.post(SET_PLAYER_ORDER_EP, { data: {playerArray, gameId}})
+        const playerOrder = res.data.message
+
+        dispatch({
+            type: gameTypes.SET_PLAYER_ORDER,
+            payload: playerOrder
+        })
+    } catch (error) {
+        console.log('gameStateActions setPlayerOrder Error: ', error)
+    }
 }
