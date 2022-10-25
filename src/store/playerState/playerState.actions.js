@@ -1,9 +1,12 @@
 import axios from 'axios';
 import * as playerTypes from './playerState.types';
 
+const USE_LOCAL = false
 
-const SET_PLAYER_EP = 'http://localhost:9001/player/setPlayer'
-const GET_PLAYERS_EP = 'http://localhost:9001/player/getPlayers'
+
+const SET_PLAYER_EP = USE_LOCAL ? 'http://localhost:9001/player/setPlayer' : 'https://nicus-dirty-christmas.herokuapp.com/player/setPlayer';
+const GET_PLAYERS_EP = USE_LOCAL ? 'http://localhost:9001/player/getPlayers' : 'https://nicus-dirty-christmas.herokuapp.com/player/getPlayers';
+const GET_SINGLE_PLAYER_EP = USE_LOCAL ? 'http://localhost:9001/player/getSinglePlayer' : 'https://nicus-dirty-christmas.herokuapp.com/player/getSinglePlayer';
 
 
 export const setPlayer = (playerName, pin) => async (dispatch) => {
@@ -47,7 +50,7 @@ export const getPlayers = () => async dispatch => {
 
 export const refreshPlayerData = (playerId) => async dispatch => {
     try {
-        const newDataRes = await  axios.post('http://localhost:9001/player/getSinglePlayer', { data: { playerId }})
+        const newDataRes = await  axios.post(GET_SINGLE_PLAYER_EP, { data: { playerId }})
 
         const newData = newDataRes.data.message
 

@@ -2,9 +2,15 @@ import * as gameTypes from './gameState.types';
 import * as playerTypes from '../playerState/playerState.types'
 import axios from 'axios'
 
-const START_GAME_EP = 'http://localhost:9001/game/startGame'
-const REJOIN_GAME_EP = 'http://localhost:9001/game/rejoinGame'
-const SET_PLAYER_ORDER_EP = 'http://localhost:9001/game/setPlayerOrder'
+const USE_LOCAL = false
+
+const START_GAME_EP =  USE_LOCAL ? 'http://localhost:9001/game/startGame' : 'https://nicus-dirty-christmas.herokuapp.com/game/startGame'
+const REJOIN_GAME_EP = USE_LOCAL ? 'http://localhost:9001/game/rejoinGame' : 'https://nicus-dirty-christmas.herokuapp.com/game/rejoinGame'
+const SET_PLAYER_ORDER_EP = USE_LOCAL ? 'http://localhost:9001/game/setPlayerOrder' : 'https://nicus-dirty-christmas.herokuapp.com/game/setPlayerOrder'
+const GET_GAME_DATA_EP = USE_LOCAL ? 'http://localhost:9001/game/getGameData' : 'https://nicus-dirty-christmas.herokuapp.com/game/getGameData'
+const SET_PLAYER_TURN_EP =  USE_LOCAL ? 'http://localhost:9001/game/setPlayerTurn': 'https://nicus-dirty-christmas.herokuapp.com/game/setPlayerTurn'
+
+
 
 export const startGame = () => async (dispatch) => {
     try {
@@ -45,7 +51,7 @@ export const setGameData = (gameData) => async (dispatch) => {
 
 export const refreshGameData = (gameId) => async (dispatch) => {
     try {
-        const res = await axios.post('http://localhost:9001/game/getGameData', { data: { gameId }})
+        const res = await axios.post(GET_GAME_DATA_EP, { data: { gameId }})
         const gameData = res.data.message
 
         if (gameData){
@@ -79,10 +85,8 @@ export const setLocalCurrentTurn = (currentTurn) => async (dispatch) => {
 
 export const setCurrentTurn = (playerId, gameId) => async (dispatch) => {
     try{
-        console.log('Player ID: ', playerId) //!REMOVE
-        console.log('Game ID: ', gameId) //!REMOVE
-        const res = await axios.post('http://localhost:9001/game/setPlayerTurn', {data: {playerId, gameId}})
-        const currentTurn = res.data.message
+
+        await axios.post(SET_PLAYER_TURN_EP, {data: {playerId, gameId}})
 
         dispatch({
             type: gameTypes.SET_CURRENT_TURN,

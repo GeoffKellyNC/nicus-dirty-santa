@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import * as gameActions from '../../store/gameState/gameState.actions'
@@ -30,7 +30,13 @@ const CurrentGame = (props) => {
         </div>
         <div>
             {
-                currentTurn ? <span> {getPlayerName(currentTurn)}</span> : <span>NO PLAYER</span>
+                currentTurn ? 
+                <>
+                    <span className='current-turn-title'> Current Turn: </span> 
+                    <span className='current-turn-text'> {getPlayerName(currentTurn)}</span> 
+                </>
+                : 
+                <span>Waiting for Game to Start...</span>
             }
         </div>
     </CurrentGameStyled>
@@ -50,9 +56,24 @@ export default connect(mapStateToProps, gameActions) (CurrentGame)
 
 
 const CurrentGameStyled = styled.div`
-    background: ${pr => pr.theme.colors.green};
-    width: calc(100% + 200px);
+    width: calc(100% + 400px);
+    height: 200px;
     color: black;
+    margin-left: -200px;
+
+    .current-turn-title {
+        font-weight: bold;
+        font-size: ${pr => pr.theme.fonts.size.heading};
+        color: white;
+        font-family: ${pr => pr.theme.fonts.family.nicus};
+    }
+
+    .current-turn-text {
+        font-size: ${pr => pr.theme.fonts.size.heading};
+        color: ${pr => pr.theme.colors.red};
+        font-family: ${pr => pr.theme.fonts.family.nicus};
+    }
+
 
 
 

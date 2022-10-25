@@ -2,11 +2,12 @@ import axios from 'axios'
 import * as prizeTypes from './prizeState.types'
 import * as playerTypes from '../playerState/playerState.types'
 
+const USE_LOCAL = false
 
-const SET_PRIZE_EP = 'http://localhost:9001/prize/setPrize'
-const GET_ALL_PRIZES_EP = 'http://localhost:9001/prize/getAllprizes'
-const SET_PLAYER_PRIZE_EP = 'http://localhost:9001/prize/setPlayerPrize'
-const STEAL_PRIZE_EP = 'http://localhost:9001/prize/stealPrize'
+const SET_PRIZE_EP = USE_LOCAL ? 'http://localhost:9001/prize/setPrize' : 'https://nicus-dirty-christmas.herokuapp.com/prize/setPrize'
+const GET_ALL_PRIZES_EP = USE_LOCAL ? 'http://localhost:9001/prize/getAllprizes' : 'https://nicus-dirty-christmas.herokuapp.com/prize/getAllprizes'
+const SET_PLAYER_PRIZE_EP = USE_LOCAL ? 'http://localhost:9001/prize/setPlayerPrize' : 'https://nicus-dirty-christmas.herokuapp.com/prize/setPlayerPrize'
+const STEAL_PRIZE_EP = USE_LOCAL ? 'http://localhost:9001/prize/stealPrize' : 'https://nicus-dirty-christmas.herokuapp.com/prize/stealPrize'
 
 
 export const setPrize = ( prizeName, prizeImg, prizeValue) => async (dispatch) => {

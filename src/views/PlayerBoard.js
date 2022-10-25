@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { connect } from 'react-redux'
@@ -6,25 +7,25 @@ import * as prizeActions from '../store/prizeState/prizeState.actions'
 import * as gameActions from '../store/gameState/gameState.actions'
 import styled from 'styled-components'
 
+import GameStream from '../components/playerBoard/GameStream'
 import PlayerCurrent from '../components/playerBoard/PlayerCurrent'
 import PlayerActions from '../components/playerBoard/PlayerActions.jsx'
+import Snowflake from '../components/playerBoard/Snowflake'
 
 const PlayerBoard = (props) => {
     const { 
-      players, 
       playerData, 
       getAllPrizes, 
       refreshPlayerData,
       ioSocket,
-      gameData,
       refreshGameData,
       gameStatus,
       setGameData,
       setLocalCurrentTurn } = props
 
       const [gameStatusLocal, setGameStatusLocal] = useState(localStorage.getItem('gameData') || false)
-
-
+      const [moveMade, setMoveMade] = useState(false);
+      const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
 
     const nav = useNavigate()
 
@@ -44,9 +45,11 @@ const PlayerBoard = (props) => {
         })
   
         ioSocket.on('moveMade', (data) => {
+          console.log('moveMade refreshing data!') //! REMOVE
           refreshData()
           refreshGameData()
           refreshPlayerData()
+          getAllPrizes()
         })
         ioSocket.on('gameData', (data) => {
           localStorage.setItem('gameData', JSON.stringify(data))
@@ -54,6 +57,7 @@ const PlayerBoard = (props) => {
         ioSocket.on('shuffled', (data) => {
           localStorage.setItem('shuffledPlayers', JSON.stringify(data.shuffledPlayers))
           localStorage.setItem('currentTurn' , JSON.stringify(data.shuffledPlayers[0].playerId))
+          setLocalCurrentTurn(data.shuffledPlayers[0].playerId)
         })
         ioSocket.on('sendNextPlayer', (data) => {
           const { playerId } = data
@@ -65,15 +69,22 @@ const PlayerBoard = (props) => {
           const { playerList } = data
           localStorage.setItem('shuffledPlayers', JSON.stringify(playerList))
         })
+
+        ioSocket.on("giftChosen", (data) => {
+          setPlayerMove({
+            ...playerMove,
+            player: data.playerName,
+            prize: data.giftName,
+          });
+          setMoveMade(true);
+        });
+
+
         } catch (error) {
           console.log(error)
         }
       })()
     }, 1000);
-
-    // const runSocket = async () => {
-      
-    // }
 
 
     useEffect(() => {
@@ -84,26 +95,29 @@ const PlayerBoard = (props) => {
 
     }, [])
 
-    // setTimeout(() => {
-    //   refreshPlayerData(localStorage.getItem('playerId'))
-    // }, 3000);
 
 
   return (
     <PlayerBoardStyled>
+      <Snowflake />
+      <div className='nav-controls'>
         <button onClick={() => nav('/masterPrizes')}> View Prizes </button>
         <button onClick = {() => nav('/')}> Home </button>
-        <div className='player-board-header'>
-          <span> Welcome {playerData.player_name} to Nicus Dirty Santa</span>
-          {
-            gameStatusLocal || gameStatus ? 
-            <h1 className='playerboard-text'>Game is in progress</h1>
-            :
-            <h1 className='playerboard-text'>Waiting for game to start</h1>
-        }
-        </div>
-        <PlayerCurrent />
-        <PlayerActions />
+      </div>
+      <div className='player-board-header'>
+        <span> Welcome {playerData.player_name} to Nicus Dirty Santa</span>
+        {
+          gameStatusLocal || gameStatus ? 
+          <h1 className='playerboard-text game-active'>Game is in progress</h1>
+          :
+          <h1 className='playerboard-text'>Waiting for game to start</h1>
+      }
+      </div>
+      <PlayerCurrent />
+      <PlayerActions />
+      <GameStream 
+        moveMade = { moveMade } 
+        playerMove = { playerMove } />
     </PlayerBoardStyled>
   )
 }
@@ -114,7 +128,8 @@ const mapStateToProps = state => {
         playerData: state.playerData,
         ioSocket: state.ioSocket,
         gameData: state.gameData,
-        gameStatus: state.gameStatus
+        gameStatus: state.gameStatus,
+        currentTurn: state.currentTurn
       })
 }
 
@@ -122,9 +137,11 @@ export default connect(mapStateToProps, {...playerActions, ...prizeActions, ...g
 
 
 const PlayerBoardStyled = styled.div`
-  background: ${pr => pr.theme.colors.background_black};
+  background: rgb(47,109,211);
+  background: linear-gradient(0deg, rgba(47,109,211,1) 6%, rgba(80,148,228,1) 60%, rgba(47,109,211,1) 100%);
   height: 100vh;
   overflow-y: hidden;
+  color: white;
 
   .player-board-header {
     color: white;
@@ -134,8 +151,20 @@ const PlayerBoardStyled = styled.div`
 
     & > span {
       font-family: ${pr => pr.theme.fonts.family.christmas};
-      font-size: ${pr => pr.theme.fonts.size.heading};
+      font-size: ${pr => pr.theme.fonts.size.title};
     }
+  }
+
+  .playerboard-text {
+    font-family: ${pr => pr.theme.fonts.family.nicus};
+    font-size: ${pr => pr.theme.fonts.size.heading};
+    margin-top: 2%;
+    color: ${pr => pr.theme.fonts.color.red};
+
+  }
+
+  .game-active {
+    color: ${pr => pr.theme.fonts.color.green};
   }
 
 

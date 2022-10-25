@@ -58,13 +58,13 @@ const PlayerActions = (props) => {
 
   return (
     <PlayerActionsStyled>
-      <div>
+      <div className="player-buttons">
         {
           playerData.player_current_prize ? 
-          <button className = 'choose-gift-btn' disabled onClick={handleChooseGiftToggle}> Choose Gift </button> :
-          <button className = 'choose-gift-btn' onClick={handleChooseGiftToggle}> Choose Gift </button>
+          <button className = 'choose-gift-btn btn' disabled onClick={handleChooseGiftToggle}> Choose Gift </button> :
+          <button className = 'choose-gift-btn btn' onClick={handleChooseGiftToggle}> Choose Gift </button>
         }
-        <button onClick={handleStealGiftToggle}>Steal Gift</button>
+        <button className="steal-gift-btn btn" onClick={handleStealGiftToggle}>Steal Gift</button>
       </div>
       {chooseGiftToggle && (
         <AvailableGifts
@@ -84,6 +84,7 @@ const PlayerActions = (props) => {
           stealPrize={stealPrize}
           stealToggle={setSteal}
           stealNextPlayer = {stealNextPlayer}
+          ioSocket = {ioSocket}
         />
       )}
     </PlayerActionsStyled>
@@ -106,4 +107,40 @@ export default connect(mapStateToProps, { ...playerActions, ...prizeActions, ...
 
 const PlayerActionsStyled = styled.div`
   color: white;
+
+  .player-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    background: rgba( 248, 0, 3, 0.3 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    color: white;
+    font-size: ${props => props.theme.fonts.size.large};
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 150px;
+    height: 50px;
+
+    &:hover {
+      background: rgba( 248, 0, 3, 0.5 );
+      box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+      backdrop-filter: blur( 4px );
+      -webkit-backdrop-filter: blur( 4px );
+      border-radius: 10px;
+      border: 1px solid rgba( 255, 255, 255, 0.18 );
+      scale: 1.1;
+    }
+
+  }
 `;

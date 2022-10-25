@@ -7,12 +7,12 @@ const StealGift = ({
   players,
   stealPrize,
   stealToggle,
-  stealNextPlayer
+  stealNextPlayer,
+  ioSocket
 }) => {
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
 
-  console.log('Gifts To Steal: ', giftsToSteal) //!REMOVE
 
   useEffect(() => {
     setGiftsToSteal(
@@ -25,6 +25,7 @@ const StealGift = ({
     const newPlayerId = playerData.player_id;
     await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
     await stealNextPlayer(oldPlayerId);
+    await ioSocket.emit('moveMade')
     stealToggle(false);
   };
 
