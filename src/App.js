@@ -8,7 +8,8 @@ import Register from './views/Register'
 import PlayerBoard from './views/PlayerBoard'
 import MasterPrizes from './views/MasterPrizes';
 
-import socketIOClient from "socket.io-client";
+// import socketIOClient from "socket.io-client";
+import { io } from "socket.io-client";
 import { connect } from 'react-redux'
 import * as gameActions from './store/gameState/gameState.actions'
 
@@ -24,7 +25,7 @@ function App (props) {
   const ENDPOINT = LOCAL ? 'http://localhost:9001' : "https://twitch-berry-bot.herokuapp.com/";
 
   useEffect(() => {
-    const socket = socketIOClient(ENDPOINT);
+    const socket = io(ENDPOINT);
     setIoSocket(socket)
     
   }, [ENDPOINT, setIoSocket]);
