@@ -15,19 +15,19 @@ import * as gameActions from './store/gameState/gameState.actions'
 
 
 
-
+const LOCAL = true
 
 
 function App (props) {
   const { setIoSocket } = props
 
-  const ENDPOINT = "https://twitch-berry-bot.herokuapp.com/";
+  const ENDPOINT = LOCAL ? 'http://localhost:9001' : "https://twitch-berry-bot.herokuapp.com/";
 
   useEffect(() => {
-    const socket = socketIOClient(ENDPOINT);
+    const socket = socketIOClient();
     setIoSocket(socket)
     
-  }, [setIoSocket]);
+  }, [ENDPOINT, setIoSocket]);
 
   return (
     <div className="App">
