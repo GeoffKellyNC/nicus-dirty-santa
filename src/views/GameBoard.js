@@ -48,6 +48,11 @@ const GameBoard = (props) => {
         setLocalCurrentTurn(playerId);
         localStorage.setItem("currentTurn", JSON.stringify(playerId));
       });
+      ioSocket.on('player-joined-update', (data) => {
+        const { playerName } = data;
+        console.log('player-joined-update', playerName);
+        getPlayers();
+      })
     })();
   }, 1000);
 
