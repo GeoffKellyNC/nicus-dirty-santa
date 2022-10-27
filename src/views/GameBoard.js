@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
-import {useNavigate} from "react-router";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 import AddPrizeForm from "../components/gameBoard/AddPrize.form";
@@ -48,11 +48,11 @@ const GameBoard = (props) => {
         setLocalCurrentTurn(playerId);
         localStorage.setItem("currentTurn", JSON.stringify(playerId));
       });
-      ioSocket.on('player-joined-update', (data) => {
+      ioSocket.on("player-joined-update", (data) => {
         const { playerName } = data;
-        console.log('player-joined-update', playerName);
+        console.log("player-joined-update", playerName);
         getPlayers();
-      })
+      });
     })();
   }, 1000);
 
@@ -124,8 +124,13 @@ export default connect(mapStateToProps, { ...playerActions, ...gameActions })(
 );
 
 const GameBoardStyled = styled.div`
-  background: rgb(47,109,211);
-  background: linear-gradient(0deg, rgba(47,109,211,1) 6%, rgba(80,148,228,1) 60%, rgba(47,109,211,1) 100%);
+  background: rgb(47, 109, 211);
+  background: linear-gradient(
+    0deg,
+    rgba(47, 109, 211, 1) 6%,
+    rgba(80, 148, 228, 1) 60%,
+    rgba(47, 109, 211, 1) 100%
+  );
   height: 100vh;
   overflow-y: hidden;
   color: white;
@@ -161,7 +166,6 @@ const GameBoardStyled = styled.div`
     border-radius: 1rem;
     font-size: 1.5rem;
     font-weight: bold;
-    font-family: ${pr => pr.theme.fonts.family.nicus};
-
+    font-family: ${(pr) => pr.theme.fonts.family.nicus};
   }
 `;
