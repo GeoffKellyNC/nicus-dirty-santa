@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, {useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 import styled from 'styled-components'
 
-import RejoinGame from '../components/home/RejoinGame.form'
 import ChristmasLights from '../components/christmasLights/ChristmasLights'
+import RejoinGame from '../components/home/RejoinGame.form'
 
 const Home = () => {
-    const [rejoin, setRejoin] = useState(false)
+  const [rejoin, setRejoin] = useState(false)
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
   return (
     <HomeStyled>
         <ChristmasLights />
@@ -25,15 +25,16 @@ const Home = () => {
                 }
             </div>
         </div>
-        <button className='clear-storage-button' onClick={() => {localStorage.clear()}}> Remove Local </button>
+        <button className='clear-storage-button' onClick={() => {
+  localStorage.clear()}}> Remove Local </button>
     </HomeStyled>
   )
 }
 
 export default Home
 
-
-const HomeStyled = styled.div`
+const HomeStyled =
+    styled.div`
     height: 100vh;
     overflow-y: hidden;
     background: rgb(255,255,255);
@@ -75,26 +76,26 @@ const HomeStyled = styled.div`
     }
 
     ${'' /* .choice-btn {
-        width: 350px;
-        height: 100px;
-        font-family: ${pr => pr.theme.fonts.family.nicus};
-        font-size: ${pr => pr.theme.fonts.size.large};
-        background: rgba( 255, 255, 255, 0.25 );
-        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-        backdrop-filter: blur( 4px );
-        -webkit-backdrop-filter: blur( 4px );
-        border-radius: 10px;
-        border: 1px solid rgba( 255, 255, 255, 0.18 );
-        transition: all 0.3s ease-in-out;
+width: 350px;
+height: 100px;
+font-family: ${pr => pr.theme.fonts.family.nicus};
+font-size: ${pr => pr.theme.fonts.size.large};
+background: rgba( 255, 255, 255, 0.25 );
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+backdrop-filter: blur( 4px );
+-webkit-backdrop-filter: blur( 4px );
+border-radius: 10px;
+border: 1px solid rgba( 255, 255, 255, 0.18 );
+transition: all 0.3s ease-in-out;
 
-        &:hover {
-            background: rgba( 255, 255, 255, 0.35 );
-            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.47 );
-            backdrop-filter: blur( 6px );
-            scale: 1.1;
-        }
+&:hover {
+background: rgba( 255, 255, 255, 0.35 );
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.47 );
+backdrop-filter: blur( 6px );
+scale: 1.1;
+}
 
-    } */}
+} */}
 
     .choice-btn {
 	display: inline-block;

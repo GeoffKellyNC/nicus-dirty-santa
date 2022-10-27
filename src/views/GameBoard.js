@@ -1,14 +1,14 @@
-import React, { useEffect, useState} from "react";
-import { useNavigate } from "react-router";
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
+import {useNavigate} from "react-router";
 import styled from "styled-components";
-import { connect } from "react-redux";
-import * as playerActions from "../store/playerState/playerState.actions";
-import * as gameActions from "../store/gameState/gameState.actions";
 
 import AddPrizeForm from "../components/gameBoard/AddPrize.form";
-import PlayersList from "../components/gameBoard/PlayersList";
-import PlayerOrder from "../components/gameBoard/PlayerOrder";
 import CurrentGame from "../components/gameBoard/CurrentGame";
+import PlayerOrder from "../components/gameBoard/PlayerOrder";
+import PlayersList from "../components/gameBoard/PlayersList";
+import * as gameActions from "../store/gameState/gameState.actions";
+import * as playerActions from "../store/playerState/playerState.actions";
 
 const GameBoard = (props) => {
   const {

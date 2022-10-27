@@ -3,8 +3,6 @@ import styled from 'styled-components'
 
 import RegisterForm from '../components/register/Register.form'
 
-
-
 const Register = () => {
 
 
