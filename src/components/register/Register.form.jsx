@@ -7,7 +7,7 @@ import styled from 'styled-components'
 
 
 const RegisterForm = (props) => {
-    const { setPlayer } = props
+    const { setPlayer, ioSocket } = props
     const [formValues, setFormValues] = useState({playerName: '', pin: ''})
 
     const navigate = useNavigate()
@@ -17,12 +17,10 @@ const RegisterForm = (props) => {
     }
 
     const onSubmit = async (e) => {
+        await ioSocket.emit('player-joined', {playerName: formValues.playerName})
         e.preventDefault()
         await setPlayer(formValues.playerName, formValues.pin)
         setFormValues({playerName: '', pin: ''})
-        // setTimeout(() => {
-        //     navigate('/playerboard')
-        // }, 1000);
         navigate('/playerboard')
     }
 
@@ -50,7 +48,13 @@ const RegisterForm = (props) => {
     )
 }
 
-export default connect(null, playerActions) (RegisterForm)
+const mapStateToProps = state => {
+    return({
+        ioSocket: state.ioSocket
+    })
+}
+
+export default connect(mapStateToProps, playerActions) (RegisterForm)
 
 
 const Register = styled.form`

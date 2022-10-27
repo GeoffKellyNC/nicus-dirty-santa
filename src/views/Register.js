@@ -3,13 +3,19 @@ import styled from 'styled-components'
 
 import RegisterForm from '../components/register/Register.form'
 
+
+
 const Register = () => {
+
+
   return (
     <RegisterStyled>
       <RegisterForm />
     </RegisterStyled>
   )
 }
+
+
 
 export default Register
 
