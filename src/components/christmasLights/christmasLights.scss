@@ -17,7 +17,7 @@ $light-off-opacity: 0.4;
   width: 100%;
   li {
     position: relative;
-    animation-fill-mode: both; 
+    animation-fill-mode: both;
     animation-iteration-count:infinite;
     list-style: none;
     margin: 0;
@@ -78,21 +78,21 @@ $light-off-opacity: 0.4;
     }
   }
 }
-@keyframes flash-1 { 
+@keyframes flash-1 {
     0%, 100% { background: rgba(0,247,165,1);
-    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(0,247,165,1);} 
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(0,247,165,1);}
     50% { background: rgba(0,247,165,$light-off-opacity);
     box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(0,247,165,0.2);}
 }
-@keyframes flash-2 { 
+@keyframes flash-2 {
     0%, 100% { background: rgba(0,255,255,1);
-    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(0,255,255,1);} 
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(0,255,255,1);}
     50% { background: rgba(0,255,255,$light-off-opacity);
     box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(0,255,255,0.2);}
 }
-@keyframes flash-3 { 
+@keyframes flash-3 {
     0%, 100% { background: rgba(247,0,148,1);
-    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(247,0,148,1);} 
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(247,0,148,1);}
     50% { background: rgba(247,0,148,$light-off-opacity);
     box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(247,0,148,0.2);}
 }
