@@ -16,7 +16,7 @@ const GameStream = (props) => {
     const getPlayerNameById = (id) => {
         if(players.length < 1) return ''
         const player = players.find(player => player.player_id === id)
-        return player.player_name
+        return player.player_name ? player.player_name : ''
 
       }
 
@@ -53,6 +53,14 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {...gameActions, ...prizeActions, ...playerActions}) (GameStream)
 
 const GameStreamStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: ${pr => pr.theme.fonts.family.nicus};
+    font-size: ${pr => pr.theme.fonts.size.xlarge};
+
+
 
 
 `

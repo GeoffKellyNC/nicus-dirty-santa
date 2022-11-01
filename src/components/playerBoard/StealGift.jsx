@@ -8,7 +8,8 @@ const StealGift = ({
   stealPrize,
   stealToggle,
   stealNextPlayer,
-  ioSocket
+  ioSocket,
+  setStealError
 }) => {
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
@@ -20,18 +21,40 @@ const StealGift = ({
     );
     setCurrentGift(playerData.player_current_prize);
   }, [playerData.player_current_prize, prizes]);
+  
+  const checkIfStealable = (playerId, giftId) => {
+    const gift = prizes.find((prize) => prize.prize_id === giftId);
+    if (gift.prize_previous_owner === playerId) {
+      return false;
+    }
+    return true;
+  };
 
   const handleSteal = async (giftId, oldPlayerId) => {
     const newPlayerId = playerData.player_id;
+    const canSteal = checkIfStealable(newPlayerId, giftId);
+    if (!canSteal) {
+      setStealError(true)
+      return;
+    }
+    stealToggle(false);
     await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
     await stealNextPlayer(oldPlayerId);
-    await ioSocket.emit('moveMade')
-    stealToggle(false);
+    const oldPlayerName = players.find(
+      (player) => player.player_id === oldPlayerId
+    ).player_name;
+    const newPlayerName = playerData.player_name;
+    const giftName = prizes.find((prize) => prize.prize_id === giftId)
+      .prize_name;
+
+    await ioSocket.emit('moveMadeServer', {type: 'steal', oldPlayerName, playerName: newPlayerName, giftName})
   };
+
 
   return (
     <StealGiftStyled>
       <div>
+        <button className="close-btn" onClick={() => stealToggle(false)}> Close </button>
         {prizes.length < 1 ? (
           <span className="no-gifts-text"> No Gifts Set! </span>
         ) : (

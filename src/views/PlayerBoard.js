@@ -26,6 +26,7 @@ const PlayerBoard = (props) => {
       const [gameStatusLocal, setGameStatusLocal] = useState(localStorage.getItem('gameData') || false)
       const [moveMade, setMoveMade] = useState(false);
       const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
+      const [stealError, setStealError] = useState(false);
 
     const nav = useNavigate()
 
@@ -37,7 +38,7 @@ const PlayerBoard = (props) => {
 
     setTimeout(() => {
       (() => {
-        try {
+        try { 
           ioSocket.on('startGame', (data) => {
           localStorage.setItem('gameData', JSON.stringify(data.gameData))
           setGameStatusLocal(true)
@@ -61,12 +62,14 @@ const PlayerBoard = (props) => {
         })
         ioSocket.on('sendNextPlayer', (data) => {
           const { playerId } = data
+          console.log('got next player', playerId) //!remove
           setLocalCurrentTurn(playerId)
           localStorage.setItem('currentTurn', JSON.stringify(playerId))
 
         })
         ioSocket.on('sendPlayerOrder', (data) => {
           const { playerList } = data
+          console.log('got Player Order', data) //! REMOVE
           localStorage.setItem('shuffledPlayers', JSON.stringify(playerList))
         })
 
@@ -114,7 +117,14 @@ const PlayerBoard = (props) => {
       }
       </div>
       <PlayerCurrent />
-      <PlayerActions />
+      {
+        stealError && (
+          <div className="steal-error">
+            <p> You can't steal this! </p>
+          </div>
+        )
+      }
+      <PlayerActions setStealError = { setStealError } />
       <GameStream 
         moveMade = { moveMade } 
         playerMove = { playerMove } />

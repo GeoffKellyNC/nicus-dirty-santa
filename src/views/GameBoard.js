@@ -24,6 +24,8 @@ const GameBoard = (props) => {
   const [started, setStarted] = useState(false);
   const [moveMade, setMoveMade] = useState(false);
   const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
+  const [playerSteal, setPlayerSteal] = useState({ player: '', oldPlayer: '', prize: ''})
+  const [stealMade, setStealMade] = useState(false);
 
   const nav = useNavigate();
 
@@ -35,7 +37,7 @@ const GameBoard = (props) => {
         setStarted(true);
       });
       ioSocket.on("giftChosen", (data) => {
-        console.log("GiftChosen", data);
+        if(stealMade)setStealMade(false)
         setPlayerMove({
           ...playerMove,
           player: data.playerName,
@@ -43,6 +45,18 @@ const GameBoard = (props) => {
         });
         setMoveMade(true);
       });
+      ioSocket.on('giftStolen', (data) => {
+        console.log('giftChosen', data) //!REMOVE
+        if (moveMade) setMoveMade(false)
+        setPlayerSteal({
+          ...playerSteal,
+          player: data.playerName,
+          oldPlayer: data.oldPlayerName,
+          prize: data.giftName
+        })
+        setStealMade(true)
+
+      })
       ioSocket.on("sendNextPlayer", (data) => {
         const { playerId } = data;
         setLocalCurrentTurn(playerId);
@@ -106,6 +120,13 @@ const GameBoard = (props) => {
           </span>
         </div>
       )}
+      {stealMade &&
+        <div className="move-made">
+          <span>
+            {playerSteal.player} stole {playerSteal.prize} from {playerSteal.oldPlayer}!
+          </span>
+        </div>
+      }
     </GameBoardStyled>
   );
 };

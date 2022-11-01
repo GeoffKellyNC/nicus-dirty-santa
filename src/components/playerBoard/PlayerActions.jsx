@@ -17,7 +17,8 @@ const PlayerActions = (props) => {
     stealPrize,
     ioSocket,
     setCurrentTurn,
-    gameData } = props;
+    gameData,
+    setStealError } = props;
 
   const [steal, setSteal] = useState(false);
   const [chooseGiftToggle, setChooseGiftToggle] = useState(false);
@@ -28,6 +29,7 @@ const PlayerActions = (props) => {
     await playerList.shift();
     await localStorage.setItem("shuffledPlayers", JSON.stringify(playerList));
     await ioSocket.emit("updatePlayerOrder", { playerList });
+    console.log('Sent Player List to Server: ', playerList) //!REMOVE
     console.log('playerId: ', playerList[0].playerId)
     await setCurrentTurn(playerList[0].playerId, gameData.game_id);
     await ioSocket.emit("nextPlayer", { playerId: playerList[0].playerId });
@@ -35,8 +37,15 @@ const PlayerActions = (props) => {
 
   const stealNextPlayer = async (playerId) => {
     const nextPlayerId = players.filter(player => player.player_id === playerId)[0].player_id;
+
+    const playerList = JSON.parse(localStorage.getItem("shuffledPlayers"));
+    await playerList.shift();
+    await localStorage.setItem("shuffledPlayers", JSON.stringify(playerList));
+    console.log('Player List Sent: ', playerList) //!REMOVE
+    await ioSocket.emit("updatePlayerOrder", { playerList });
+
     await setCurrentTurn(nextPlayerId, gameData.game_id);
-    await ioSocket.emit("nextPlayer", { playerId: nextPlayerId });
+    await ioSocket.emit("nextPlayer", { playerId });
 
   }
 
@@ -85,6 +94,7 @@ const PlayerActions = (props) => {
           stealToggle={setSteal}
           stealNextPlayer = {stealNextPlayer}
           ioSocket = {ioSocket}
+          setStealError = {setStealError}
         />
       )}
     </PlayerActionsStyled>

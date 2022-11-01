@@ -21,8 +21,8 @@ const AvailableGifts = ({
         const playerName = playerData.player_name
         const giftName = prizes.find(prize => prize.prize_id === giftId).prize_name
         setNextPlayer()
-        await ioSocket.emit('sendGiftChosen', {playerName, giftName})
-        await ioSocket.emit('moveMade')
+        // await ioSocket.emit('sendGiftChosen', {playerName, giftName})
+        await ioSocket.emit('moveMadeServer', {type: 'choose',playerName, giftName})
 
         setChooseGiftToggle(false)
     }
