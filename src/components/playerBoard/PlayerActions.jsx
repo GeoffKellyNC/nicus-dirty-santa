@@ -61,38 +61,43 @@ const PlayerActions = (props) => {
   
     switch (type) {
       case "choose":
-
-        playerList.shift();
-        await ioSocket.emit("updatePlayerOrder", {
-          playerList,
-          playerId: playerList[0].playerId,
-        });
-        await setCurrentTurn(playerList[0].playerId, gameData.game_id);
-        break;
-
+        const playerExists = playerList.find(player => player.playerId === currentPlayerId)
+        if (playerExists) {
+          playerList.shift();
+          await ioSocket.emit("updatePlayerOrder", {
+            playerList,
+            playerId: playerList[0].playerId,
+          });
+          await setCurrentTurn(playerList[0].playerId, gameData.game_id);
+        }
+        if (!playerExists) {
+          await ioSocket.emit("updatePlayerOrder", {
+            playerList,
+            playerId: playerList[0].playerId,
+          });
+          await setCurrentTurn(playerList[0].playerId, gameData.game_id);
+        }
+        break
       case "steal":
-        const newPlayerList2 = playerList.filter((player) => {
-          let found = false;
-          if (player.playerId === currentPlayerId) {
-            found = true;
-          }
-          return found ? player.playerId !== currentPlayerId : player;
-        });
+        const filteredPlayerList = playerList.filter(
+          (player) => player.playerId !== currentPlayerId
+        );
         await localStorage.setItem(
           "shuffledPlayers",
-          JSON.stringify(newPlayerList2)
+          JSON.stringify(filteredPlayerList)
         );
         await ioSocket.emit("updatePlayerOrder", {
-          playerList: newPlayerList2,
+          playerList: filteredPlayerList,
           playerId: stolenPlayerId,
         });
         await setCurrentTurn(stolenPlayerId, gameData.game_id);
         break;
-
       default:
         break;
     }
   };
+
+  
 
   const handleChooseGiftToggle = () => {
     if (steal) {
