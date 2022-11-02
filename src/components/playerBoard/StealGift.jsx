@@ -5,9 +5,9 @@ const StealGift = ({
   prizes,
   playerData,
   players,
-  stealPrize,
+  stealPrize, 
   stealToggle,
-  stealNextPlayer,
+  updatePlayerOrder,
   ioSocket,
   setStealError
 }) => {
@@ -39,7 +39,7 @@ const StealGift = ({
     }
     stealToggle(false);
     await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
-    await stealNextPlayer(oldPlayerId);
+    await updatePlayerOrder('steal', newPlayerId, oldPlayerId);
     const oldPlayerName = players.find(
       (player) => player.player_id === oldPlayerId
     ).player_name;

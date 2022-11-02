@@ -34,7 +34,7 @@ const PlayerBoard = (props) => {
       const playerData = JSON.parse(localStorage.getItem('PlayerData'))
       const playerId = playerData.player_id
       refreshPlayerData(playerId)
-    }
+    } 
 
     setTimeout(() => {
       (() => {

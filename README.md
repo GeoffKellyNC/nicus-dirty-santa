@@ -30,7 +30,9 @@ Data:
 
 
 
-
+Player Makes Move: 
+-   Next player is next in the queue
+- Send Gift Name
 
 
 
