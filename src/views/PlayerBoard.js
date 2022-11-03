@@ -26,7 +26,9 @@ const PlayerBoard = (props) => {
       const [gameStatusLocal, setGameStatusLocal] = useState(localStorage.getItem('gameData') || false)
       const [moveMade, setMoveMade] = useState(false);
       const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
+      const [playerSteal, setPlayerSteal] = useState({ player: '', oldPlayer: '', prize: '' });
       const [stealError, setStealError] = useState(false);
+      const [stealMade, setStealMade] = useState(false);
 
     const nav = useNavigate()
 
@@ -74,6 +76,7 @@ const PlayerBoard = (props) => {
         })
 
         ioSocket.on("giftChosen", (data) => {
+          if(stealMade) setStealMade(false)
           setPlayerMove({
             ...playerMove,
             player: data.playerName,
@@ -81,6 +84,17 @@ const PlayerBoard = (props) => {
           });
           setMoveMade(true);
         });
+
+        ioSocket.on('giftStolen', (data) => {
+          if(moveMade) setMoveMade(false)
+          setPlayerSteal({
+            ...playerSteal,
+            player: data.playerName,
+            oldPlayer: data.oldPlayerName,
+            prize: data.giftName,
+          })
+          setStealMade(true);
+        })
 
 
         } catch (error) {
@@ -116,6 +130,13 @@ const PlayerBoard = (props) => {
           <h1 className='playerboard-text'>Waiting for game to start</h1>
       }
       </div>
+      <GameStream 
+        moveMade = { moveMade } 
+        stealMade = { stealMade }
+        playerMove = { playerMove }
+        playerSteal = { playerSteal } 
+      />
+
       <PlayerCurrent />
       {
         stealError && (
@@ -125,9 +146,7 @@ const PlayerBoard = (props) => {
         )
       }
       <PlayerActions setStealError = { setStealError } />
-      <GameStream 
-        moveMade = { moveMade } 
-        playerMove = { playerMove } />
+
     </PlayerBoardStyled>
   )
 }
@@ -170,6 +189,22 @@ const PlayerBoardStyled = styled.div`
     font-size: ${pr => pr.theme.fonts.size.heading};
     margin-top: 2%;
     color: ${pr => pr.theme.fonts.color.red};
+    animation: 'bounce' 1s infinite;
+
+  }
+
+  @keyframes bounce {
+    0% {
+      scale: 1;
+    }
+
+    50% {
+      scale: 1.1;
+    }
+
+    100% {
+      scale: 1;
+    }
 
   }
 

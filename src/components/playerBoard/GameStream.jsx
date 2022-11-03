@@ -11,7 +11,9 @@ const GameStream = (props) => {
         players,
         currentTurn,
         moveMade,
-        playerMove } = props
+        playerMove,
+        stealMade,
+        playerSteal } = props
 
     const getPlayerNameById = (id) => {
         if(players.length < 1) return ''
@@ -26,7 +28,7 @@ const GameStream = (props) => {
                 <span className='current-turn-title'> Current Turn: </span>
                 <span className='current-turn-text'>
                     {
-                        currentTurn ? getPlayerNameById(currentTurn) : null
+                        currentTurn ? getPlayerNameById(currentTurn) : 'Not Started'
                     }
                 </span>
             </div>
@@ -37,6 +39,14 @@ const GameStream = (props) => {
                             { playerMove.player } choose { playerMove.prize }
                         </span>
                     )
+                }
+                {
+                    stealMade && (
+                        <span className='move-feed'>
+                            { playerSteal.player } stole { playerSteal.prize } from { playerSteal.oldPlayer }
+                        </span>
+                    )
+
                 }
             </div>
         </GameStreamStyled>
@@ -59,8 +69,11 @@ const GameStreamStyled = styled.div`
     align-items: center;
     font-family: ${pr => pr.theme.fonts.family.nicus};
     font-size: ${pr => pr.theme.fonts.size.xlarge};
+    margin: 2rem 0;
 
+    .moves-made-container {
+        margin: 2rem 0;
 
-
+    }
 
 `

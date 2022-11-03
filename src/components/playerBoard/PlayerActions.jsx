@@ -24,40 +24,12 @@ const PlayerActions = (props) => {
   const [steal, setSteal] = useState(false);
   const [chooseGiftToggle, setChooseGiftToggle] = useState(false);
 
-  // const setNextPlayer = async () => {
-
-  //   const playerList = JSON.parse(localStorage.getItem("shuffledPlayers"));
-  //   await playerList.shift();
-  //   await localStorage.setItem("shuffledPlayers", JSON.stringify(playerList));
-  //   await ioSocket.emit("updatePlayerOrder", { playerList });
-  //   console.log('Sent Player List to Server: ', playerList) //!REMOVE
-  //   console.log('playerId: ', playerList[0].playerId)
-  //   await setCurrentTurn(playerList[0].playerId, gameData.game_id);
-  //   await ioSocket.emit("nextPlayer", { playerId: playerList[0].playerId });
-  // }
-
-  // const stealNextPlayer = async (playerId) => {
-  //   const nextPlayerId = players.filter(player => player.player_id === playerId)[0].player_id;
-
-  //   const playerList = JSON.parse(localStorage.getItem("shuffledPlayers"));
-  //   await playerList.shift();
-  //   await localStorage.setItem("shuffledPlayers", JSON.stringify(playerList));
-  //   console.log('Player List Sent: ', playerList) //!REMOVE
-  //   await ioSocket.emit("updatePlayerOrder", { playerList });
-
-  //   await setCurrentTurn(nextPlayerId, gameData.game_id);
-  //   await ioSocket.emit("nextPlayer", { playerId });
-
-  // }
-
   const updatePlayerOrder = async (
     type,
     currentPlayerId,
     stolenPlayerId = null
   ) => {
     const playerList = JSON.parse(localStorage.getItem("shuffledPlayers"));
-
-    console.log("Current Player List: ", playerList); //!REMOVE
   
     switch (type) {
       case "choose":
@@ -96,8 +68,6 @@ const PlayerActions = (props) => {
         break;
     }
   };
-
-  
 
   const handleChooseGiftToggle = () => {
     if (steal) {

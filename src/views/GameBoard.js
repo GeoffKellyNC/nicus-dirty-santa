@@ -23,9 +23,9 @@ const GameBoard = (props) => {
   // eslint-disable-next-line no-unused-vars
   const [started, setStarted] = useState(false);
   const [moveMade, setMoveMade] = useState(false);
+  const [stealMade, setStealMade] = useState(false);
   const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
   const [playerSteal, setPlayerSteal] = useState({ player: '', oldPlayer: '', prize: ''})
-  const [stealMade, setStealMade] = useState(false);
 
   const nav = useNavigate();
 
@@ -62,7 +62,6 @@ const GameBoard = (props) => {
         });
 
         ioSocket.on('giftStolen', (data) => {
-          console.log('giftChosen', data) //!REMOVE
           if (moveMade) setMoveMade(false)
           setPlayerSteal({
             ...playerSteal,

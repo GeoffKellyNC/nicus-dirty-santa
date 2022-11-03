@@ -14,6 +14,21 @@ const StealGift = ({
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
 
+  const getPrizeOwner = (prizeId) => {
+    
+    const prizeOwner = players.find(player => {
+      return player.player_id === prizeId
+    })
+
+
+    return prizeOwner
+
+
+
+
+    
+  }
+
 
   useEffect(() => {
     setGiftsToSteal(
@@ -55,7 +70,7 @@ const StealGift = ({
     <StealGiftStyled>
       <div>
         <button className="close-btn" onClick={() => stealToggle(false)}> Close </button>
-        {prizes.length < 1 ? (
+        {prizes.length < 1 || players.length < 1 ? (
           <span className="no-gifts-text"> No Gifts Set! </span>
         ) : (
           giftsToSteal.map((gift, idx) => {
@@ -75,9 +90,7 @@ const StealGift = ({
                 <div className="steal-gift-body">
                   <span className="steal-current-owner">
                     {
-                      players.filter(
-                        (player) =>
-                          player.player_id === gift.prize_current_owner)[0].player_name
+                      getPrizeOwner(gift.prize_current_owner).player_name
                     }
                   </span>
                 </div>
