@@ -33,6 +33,7 @@ export const setPlayer = (playerName, pin) => async (dispatch) => {
 
 export const getPlayers = () => async dispatch => {
     try {
+        console.log('getPlayers') //!REMOVE
         const getPlayersRes = await axios.get(GET_PLAYERS_EP)
         const players = getPlayersRes.data.message
 

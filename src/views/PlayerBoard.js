@@ -26,6 +26,9 @@ const PlayerBoard = (props) => {
       const [gameStatusLocal, setGameStatusLocal] = useState(localStorage.getItem('gameData') || false)
       const [moveMade, setMoveMade] = useState(false);
       const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
+      const [playerSteal, setPlayerSteal] = useState({ player: '', oldPlayer: '', prize: '' });
+      const [stealError, setStealError] = useState(false);
+      const [stealMade, setStealMade] = useState(false);
 
     const nav = useNavigate()
 
@@ -33,11 +36,11 @@ const PlayerBoard = (props) => {
       const playerData = JSON.parse(localStorage.getItem('PlayerData'))
       const playerId = playerData.player_id
       refreshPlayerData(playerId)
-    }
+    } 
 
     setTimeout(() => {
       (() => {
-        try {
+        try { 
           ioSocket.on('startGame', (data) => {
           localStorage.setItem('gameData', JSON.stringify(data.gameData))
           setGameStatusLocal(true)
@@ -61,16 +64,19 @@ const PlayerBoard = (props) => {
         })
         ioSocket.on('sendNextPlayer', (data) => {
           const { playerId } = data
+          console.log('got next player', playerId) //!remove
           setLocalCurrentTurn(playerId)
           localStorage.setItem('currentTurn', JSON.stringify(playerId))
 
         })
         ioSocket.on('sendPlayerOrder', (data) => {
           const { playerList } = data
+          console.log('got Player Order', data) //! REMOVE
           localStorage.setItem('shuffledPlayers', JSON.stringify(playerList))
         })
 
         ioSocket.on("giftChosen", (data) => {
+          if(stealMade) setStealMade(false)
           setPlayerMove({
             ...playerMove,
             player: data.playerName,
@@ -78,6 +84,17 @@ const PlayerBoard = (props) => {
           });
           setMoveMade(true);
         });
+
+        ioSocket.on('giftStolen', (data) => {
+          if(moveMade) setMoveMade(false)
+          setPlayerSteal({
+            ...playerSteal,
+            player: data.playerName,
+            oldPlayer: data.oldPlayerName,
+            prize: data.giftName,
+          })
+          setStealMade(true);
+        })
 
 
         } catch (error) {
@@ -113,11 +130,23 @@ const PlayerBoard = (props) => {
           <h1 className='playerboard-text'>Waiting for game to start</h1>
       }
       </div>
-      <PlayerCurrent />
-      <PlayerActions />
       <GameStream 
         moveMade = { moveMade } 
-        playerMove = { playerMove } />
+        stealMade = { stealMade }
+        playerMove = { playerMove }
+        playerSteal = { playerSteal } 
+      />
+
+      <PlayerCurrent />
+      {
+        stealError && (
+          <div className="steal-error">
+            <p> You can't steal this! </p>
+          </div>
+        )
+      }
+      <PlayerActions setStealError = { setStealError } />
+
     </PlayerBoardStyled>
   )
 }
@@ -160,6 +189,22 @@ const PlayerBoardStyled = styled.div`
     font-size: ${pr => pr.theme.fonts.size.heading};
     margin-top: 2%;
     color: ${pr => pr.theme.fonts.color.red};
+    animation: 'bounce' 1s infinite;
+
+  }
+
+  @keyframes bounce {
+    0% {
+      scale: 1;
+    }
+
+    50% {
+      scale: 1.1;
+    }
+
+    100% {
+      scale: 1;
+    }
 
   }
 

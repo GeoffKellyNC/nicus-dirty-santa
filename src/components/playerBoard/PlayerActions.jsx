@@ -9,36 +9,65 @@ import AvailableGifts from "./AvailableGifts";
 import StealGift from "./StealGift";
 
 const PlayerActions = (props) => {
-  const { 
+  const {
     prizes,
-    playerData, 
-    setPlayerPrize, 
-    players, 
+    playerData,
+    setPlayerPrize,
+    players,
     stealPrize,
     ioSocket,
     setCurrentTurn,
-    gameData } = props;
+    gameData,
+    setStealError,
+  } = props;
 
   const [steal, setSteal] = useState(false);
   const [chooseGiftToggle, setChooseGiftToggle] = useState(false);
 
-  const setNextPlayer = async () => {
-
+  const updatePlayerOrder = async (
+    type,
+    currentPlayerId,
+    stolenPlayerId = null
+  ) => {
     const playerList = JSON.parse(localStorage.getItem("shuffledPlayers"));
-    await playerList.shift();
-    await localStorage.setItem("shuffledPlayers", JSON.stringify(playerList));
-    await ioSocket.emit("updatePlayerOrder", { playerList });
-    console.log('playerId: ', playerList[0].playerId)
-    await setCurrentTurn(playerList[0].playerId, gameData.game_id);
-    await ioSocket.emit("nextPlayer", { playerId: playerList[0].playerId });
-  }
-
-  const stealNextPlayer = async (playerId) => {
-    const nextPlayerId = players.filter(player => player.player_id === playerId)[0].player_id;
-    await setCurrentTurn(nextPlayerId, gameData.game_id);
-    await ioSocket.emit("nextPlayer", { playerId: nextPlayerId });
-
-  }
+  
+    switch (type) {
+      case "choose":
+        const playerExists = playerList.find(player => player.playerId === currentPlayerId)
+        if (playerExists) {
+          playerList.shift();
+          await ioSocket.emit("updatePlayerOrder", {
+            playerList,
+            playerId: playerList[0].playerId,
+          });
+          await setCurrentTurn(playerList[0].playerId, gameData.game_id);
+        }
+        if (!playerExists) {
+          await ioSocket.emit("updatePlayerOrder", {
+            playerList,
+            playerId: playerList[0].playerId,
+          });
+          await setCurrentTurn(playerList[0].playerId, gameData.game_id);
+        }
+        break
+      case "steal":
+        const filteredPlayerList = playerList.filter(
+          (player) => player.playerId !== currentPlayerId
+        );
+        await localStorage.setItem(
+          "shuffledPlayers",
+          JSON.stringify(filteredPlayerList)
+        );
+        await ioSocket.emit("updatePlayerOrder", {
+          playerList: filteredPlayerList,
+          playerId: stolenPlayerId,
+        });
+        await setCurrentTurn(stolenPlayerId, gameData.game_id);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleChooseGiftToggle = () => {
     if (steal) {
@@ -59,12 +88,27 @@ const PlayerActions = (props) => {
   return (
     <PlayerActionsStyled>
       <div className="player-buttons">
-        {
-          playerData.player_current_prize ? 
-          <button className = 'choose-gift-btn btn' disabled onClick={handleChooseGiftToggle}> Choose Gift </button> :
-          <button className = 'choose-gift-btn btn' onClick={handleChooseGiftToggle}> Choose Gift </button>
-        }
-        <button className="steal-gift-btn btn" onClick={handleStealGiftToggle}>Steal Gift</button>
+        {playerData.player_current_prize ? (
+          <button
+            className="choose-gift-btn btn"
+            disabled
+            onClick={handleChooseGiftToggle}
+          >
+            {" "}
+            Choose Gift{" "}
+          </button>
+        ) : (
+          <button
+            className="choose-gift-btn btn"
+            onClick={handleChooseGiftToggle}
+          >
+            {" "}
+            Choose Gift{" "}
+          </button>
+        )}
+        <button className="steal-gift-btn btn" onClick={handleStealGiftToggle}>
+          Steal Gift
+        </button>
       </div>
       {chooseGiftToggle && (
         <AvailableGifts
@@ -72,8 +116,8 @@ const PlayerActions = (props) => {
           setPlayerPrize={setPlayerPrize}
           setChooseGiftToggle={setChooseGiftToggle}
           playerData={playerData}
-          ioSocket = {ioSocket}
-          setNextPlayer = {setNextPlayer}
+          ioSocket={ioSocket}
+          updatePlayerOrder={updatePlayerOrder}
         />
       )}
       {steal && (
@@ -83,8 +127,9 @@ const PlayerActions = (props) => {
           players={players}
           stealPrize={stealPrize}
           stealToggle={setSteal}
-          stealNextPlayer = {stealNextPlayer}
-          ioSocket = {ioSocket}
+          updatePlayerOrder={updatePlayerOrder}
+          ioSocket={ioSocket}
+          setStealError={setStealError}
         />
       )}
     </PlayerActionsStyled>
@@ -101,9 +146,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { ...playerActions, ...prizeActions, ...gameActions })(
-  PlayerActions
-);
+export default connect(mapStateToProps, {
+  ...playerActions,
+  ...prizeActions,
+  ...gameActions,
+})(PlayerActions);
 
 const PlayerActionsStyled = styled.div`
   color: white;
@@ -118,14 +165,14 @@ const PlayerActionsStyled = styled.div`
   }
 
   .btn {
-    background: rgba( 248, 0, 3, 0.3 );
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-    backdrop-filter: blur( 4px );
-    -webkit-backdrop-filter: blur( 4px );
+    background: rgba(248, 0, 3, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: white;
-    font-size: ${props => props.theme.fonts.size.large};
+    font-size: ${(props) => props.theme.fonts.size.large};
     padding: 10px 20px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -133,14 +180,13 @@ const PlayerActionsStyled = styled.div`
     height: 50px;
 
     &:hover {
-      background: rgba( 248, 0, 3, 0.5 );
-      box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-      backdrop-filter: blur( 4px );
-      -webkit-backdrop-filter: blur( 4px );
+      background: rgba(248, 0, 3, 0.5);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       border-radius: 10px;
-      border: 1px solid rgba( 255, 255, 255, 0.18 );
+      border: 1px solid rgba(255, 255, 255, 0.18);
       scale: 1.1;
     }
-
   }
 `;

@@ -5,13 +5,29 @@ const StealGift = ({
   prizes,
   playerData,
   players,
-  stealPrize,
+  stealPrize, 
   stealToggle,
-  stealNextPlayer,
-  ioSocket
+  updatePlayerOrder,
+  ioSocket,
+  setStealError
 }) => {
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
+
+  const getPrizeOwner = (prizeId) => {
+    
+    const prizeOwner = players.find(player => {
+      return player.player_id === prizeId
+    })
+
+
+    return prizeOwner
+
+
+
+
+    
+  }
 
 
   useEffect(() => {
@@ -20,19 +36,41 @@ const StealGift = ({
     );
     setCurrentGift(playerData.player_current_prize);
   }, [playerData.player_current_prize, prizes]);
+  
+  const checkIfStealable = (playerId, giftId) => {
+    const gift = prizes.find((prize) => prize.prize_id === giftId);
+    if (gift.prize_previous_owner === playerId) {
+      return false;
+    }
+    return true;
+  };
 
   const handleSteal = async (giftId, oldPlayerId) => {
     const newPlayerId = playerData.player_id;
-    await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
-    await stealNextPlayer(oldPlayerId);
-    await ioSocket.emit('moveMade')
+    const canSteal = checkIfStealable(newPlayerId, giftId);
+    if (!canSteal) {
+      setStealError(true)
+      return;
+    }
     stealToggle(false);
+    await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
+    await updatePlayerOrder('steal', newPlayerId, oldPlayerId);
+    const oldPlayerName = players.find(
+      (player) => player.player_id === oldPlayerId
+    ).player_name;
+    const newPlayerName = playerData.player_name;
+    const giftName = prizes.find((prize) => prize.prize_id === giftId)
+      .prize_name;
+
+    await ioSocket.emit('moveMadeServer', {type: 'steal', oldPlayerName, playerName: newPlayerName, giftName})
   };
+
 
   return (
     <StealGiftStyled>
       <div>
-        {prizes.length < 1 ? (
+        <button className="close-btn" onClick={() => stealToggle(false)}> Close </button>
+        {prizes.length < 1 || players.length < 1 ? (
           <span className="no-gifts-text"> No Gifts Set! </span>
         ) : (
           giftsToSteal.map((gift, idx) => {
@@ -52,9 +90,7 @@ const StealGift = ({
                 <div className="steal-gift-body">
                   <span className="steal-current-owner">
                     {
-                      players.filter(
-                        (player) =>
-                          player.player_id === gift.prize_current_owner)[0].player_name
+                      getPrizeOwner(gift.prize_current_owner).player_name
                     }
                   </span>
                 </div>

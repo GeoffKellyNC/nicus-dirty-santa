@@ -23,42 +23,61 @@ const GameBoard = (props) => {
   // eslint-disable-next-line no-unused-vars
   const [started, setStarted] = useState(false);
   const [moveMade, setMoveMade] = useState(false);
+  const [stealMade, setStealMade] = useState(false);
   const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
+  const [playerSteal, setPlayerSteal] = useState({ player: '', oldPlayer: '', prize: ''})
 
   const nav = useNavigate();
 
+ useEffect(() => {
   setTimeout(() => {
-    (() => {
-      console.log("ioSocket: ", ioSocket);
-      ioSocket.on("startGame", (data) => {
-        localStorage.setItem("gameData", JSON.stringify(data.gameData));
-        setStarted(true);
-      });
-      ioSocket.on("giftChosen", (data) => {
-        console.log("GiftChosen", data);
-        setPlayerMove({
-          ...playerMove,
-          player: data.playerName,
-          prize: data.giftName,
+      // START GAME SOCKET
+      (() => {
+          ioSocket.on("startGame", (data) => {
+          localStorage.setItem("gameData", JSON.stringify(data.gameData));
+          setStarted(true);
         });
-        setMoveMade(true);
-      });
-      ioSocket.on("sendNextPlayer", (data) => {
-        const { playerId } = data;
-        setLocalCurrentTurn(playerId);
-        localStorage.setItem("currentTurn", JSON.stringify(playerId));
-      });
-      ioSocket.on('player-joined-update', (data) => {
-        const { playerName } = data;
-        console.log('player-joined-update', playerName);
-        getPlayers();
-      })
-    })();
-  }, 1000);
+
+          // PLAYER CHOSEN SOCKET
+          ioSocket.on('player-joined-update', (data) => {
+          const { playerName } = data;
+          console.log('player-joined-update', playerName);
+          getPlayers();
+        })
+
+        ioSocket.on('sendNextPlayer', (data) => {
+          const { playerId } = data;
+          setLocalCurrentTurn(playerId);
+          localStorage.setItem("currentTurn", JSON.stringify(playerId));
+        })
+
+        ioSocket.on("giftChosen", (data) => {
+          if(stealMade)setStealMade(false)
+          setPlayerMove({
+            ...playerMove,
+            player: data.playerName,
+            prize: data.giftName,
+          });
+          setMoveMade(true);
+        });
+
+        ioSocket.on('giftStolen', (data) => {
+          if (moveMade) setMoveMade(false)
+          setPlayerSteal({
+            ...playerSteal,
+            player: data.playerName,
+            oldPlayer: data.oldPlayerName,
+            prize: data.giftName
+          })
+          setStealMade(true)
+        })
+      })()
+    }, 1000);
+ }, [getPlayers, ioSocket, moveMade, playerMove, playerSteal, setLocalCurrentTurn, stealMade])
 
   useEffect(() => {
     getPlayers();
-  }, [getPlayers]);
+  }, [players.length, getPlayers]);
 
   const handleStart = async () => {
     const gameData = await startGame();
@@ -106,6 +125,13 @@ const GameBoard = (props) => {
           </span>
         </div>
       )}
+      {stealMade &&
+        <div className="move-made">
+          <span>
+            {playerSteal.player} stole {playerSteal.prize} from {playerSteal.oldPlayer}!
+          </span>
+        </div>
+      }
     </GameBoardStyled>
   );
 };

@@ -23,9 +23,9 @@ const CurrentGame = (props) => {
 
   return (
     <CurrentGameStyled>
-        <div>
+        <div className = 'game-status-container'>
             {
-                gameStatus ? <span>Game Started</span> : <span>Not Started</span>
+                gameStatus ? <span className = 'game-status'>Game Started</span> : <span className = 'game-status'>Not Started</span>
             }
         </div>
         <div>
@@ -72,6 +72,12 @@ const CurrentGameStyled = styled.div`
         font-size: ${pr => pr.theme.fonts.size.heading};
         color: ${pr => pr.theme.colors.red};
         font-family: ${pr => pr.theme.fonts.family.nicus};
+    }
+
+    .game-status-container {
+        font-family: ${pr => pr.theme.fonts.family.nicus};
+        font-size: ${pr => pr.theme.fonts.size.heading};
+        color: white;
     }
 
 
