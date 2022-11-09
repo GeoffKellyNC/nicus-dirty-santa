@@ -2,7 +2,7 @@ import * as gameTypes from './gameState.types';
 import * as playerTypes from '../playerState/playerState.types'
 import axios from 'axios'
 
-const USE_LOCAL = false
+const USE_LOCAL = true
 
 const START_GAME_EP =  USE_LOCAL ? 'http://localhost:9001/game/startGame' : 'https://nicus-dirty-christmas.herokuapp.com/game/startGame'
 const REJOIN_GAME_EP = USE_LOCAL ? 'http://localhost:9001/game/rejoinGame' : 'https://nicus-dirty-christmas.herokuapp.com/game/rejoinGame'
@@ -100,12 +100,30 @@ export const setCurrentTurn = (playerId, gameId) => async (dispatch) => {
 
 export const rejoinGame = (userName, pin) => async (dispatch) => {
     const rejoinRes = await axios.post(REJOIN_GAME_EP, { data: {userName, pin}})
-    const playerData = rejoinRes.data.message
+    console.log('rejoinRes: ', rejoinRes.message) //!REMOVE
+    const { 
+            playerData, 
+            playerOrder, 
+            gameData 
+        } = rejoinRes.data.message
 
-    if(playerData === 401) return false
 
+    if(rejoinRes.data.message === 401) return false
 
-    localStorage.setItem('playerData', JSON.stringify(playerData))
+    console.log('playerData: ', playerData) //!REMOVE
+    console.log('playerOrder: ', playerOrder) //!REMOVE
+    console.log('gameData: ', gameData) //!REMOVE
+
+    if(!gameData){
+        localStorage.setItem('playerData', JSON.stringify(playerData))
+    }else{
+        localStorage.setItem('playerData', JSON.stringify(playerData))
+        localStorage.setItem('shuffledPlayers', JSON.stringify(gameData.game_order))
+        localStorage.setItem('gameId', gameData.game_id)
+        localStorage.setItem('gameData', JSON.stringify(gameData))
+        localStorage.setItem('currentTurn', gameData.current_turn)
+    }
+
 
     dispatch({
         type: playerTypes.SET_PLAYER_DATA,

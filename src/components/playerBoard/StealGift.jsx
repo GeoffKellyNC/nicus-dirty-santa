@@ -23,10 +23,6 @@ const StealGift = ({
 
     return prizeOwner
 
-
-
-
-    
   }
 
 

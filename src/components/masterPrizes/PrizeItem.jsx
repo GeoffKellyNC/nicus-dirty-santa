@@ -3,6 +3,15 @@ import styled from 'styled-components'
 
 const PrizeItem = ({prizeInfo, players}) => {
 
+  const getPrizeOwner = (prizeId) => {
+    
+    const prizeOwner = players.find(player => {
+      return player.player_id === prizeId
+    })
+
+    return prizeOwner
+  }
+
 
 
   return (
@@ -23,9 +32,9 @@ const PrizeItem = ({prizeInfo, players}) => {
               <span> Current Owner: </span>
               <span>
                 {
-                  prizeInfo.prize_current_owner ? (
-                    players.filter(player => player.player_id === prizeInfo.prize_current_owner)[0].player_name
-                  ) : (
+                  getPrizeOwner(prizeInfo.prize_current_owner) ?
+                  getPrizeOwner(prizeInfo.prize_current_owner).player_name
+                 : (
                     'AVAILABLE'
                   )
                 }
