@@ -5,26 +5,22 @@ const StealGift = ({
   prizes,
   playerData,
   players,
-  stealPrize, 
+  stealPrize,
   stealToggle,
   updatePlayerOrder,
   ioSocket,
-  setStealError
+  setStealError,
 }) => {
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
 
   const getPrizeOwner = (prizeId) => {
-    
-    const prizeOwner = players.find(player => {
-      return player.player_id === prizeId
-    })
+    const prizeOwner = players.find((player) => {
+      return player.player_id === prizeId;
+    });
 
-
-    return prizeOwner
-
-  }
-
+    return prizeOwner;
+  };
 
   useEffect(() => {
     setGiftsToSteal(
@@ -32,7 +28,7 @@ const StealGift = ({
     );
     setCurrentGift(playerData.player_current_prize);
   }, [playerData.player_current_prize, prizes]);
-  
+
   const checkIfStealable = (playerId, giftId) => {
     const gift = prizes.find((prize) => prize.prize_id === giftId);
     if (gift.prize_previous_owner === playerId) {
@@ -45,33 +41,44 @@ const StealGift = ({
     const newPlayerId = playerData.player_id;
     const canSteal = checkIfStealable(newPlayerId, giftId);
     if (!canSteal) {
-      setStealError(true)
+      setStealError(true);
       return;
     }
     stealToggle(false);
     await stealPrize(giftId, oldPlayerId, newPlayerId, currentGift);
-    await updatePlayerOrder('steal', newPlayerId, oldPlayerId);
+    await updatePlayerOrder("steal", newPlayerId, oldPlayerId);
     const oldPlayerName = players.find(
       (player) => player.player_id === oldPlayerId
     ).player_name;
     const newPlayerName = playerData.player_name;
-    const giftName = prizes.find((prize) => prize.prize_id === giftId)
-      .prize_name;
+    const giftName = prizes.find(
+      (prize) => prize.prize_id === giftId
+    ).prize_name;
 
-    await ioSocket.emit('moveMadeServer', {type: 'steal', oldPlayerName, playerName: newPlayerName, giftName})
+    await ioSocket.emit("moveMadeServer", {
+      type: "steal",
+      oldPlayerName,
+      playerName: newPlayerName,
+      giftName,
+    });
   };
-
 
   return (
     <StealGiftStyled>
       <div>
-        <button className="close-btn" onClick={() => stealToggle(false)}> Close </button>
+        <button className="close-btn" onClick={() => stealToggle(false)}>
+          {" "}
+          Close{" "}
+        </button>
         {prizes.length < 1 || players.length < 1 ? (
           <span className="no-gifts-text"> No Gifts Set! </span>
         ) : (
           giftsToSteal.map((gift, idx) => {
-            if (giftsToSteal.length < 1 || gift.prize_id === playerData.player_current_prize){
-              return null
+            if (
+              giftsToSteal.length < 1 ||
+              gift.prize_id === playerData.player_current_prize
+            ) {
+              return null;
             }
             return (
               <div className="steal-gift-container" key={idx}>
@@ -85,9 +92,7 @@ const StealGift = ({
                 </div>
                 <div className="steal-gift-body">
                   <span className="steal-current-owner">
-                    {
-                      getPrizeOwner(gift.prize_current_owner).player_name
-                    }
+                    {getPrizeOwner(gift.prize_current_owner).player_name}
                   </span>
                 </div>
                 <button
@@ -95,7 +100,10 @@ const StealGift = ({
                   onClick={() =>
                     handleSteal(gift.prize_id, gift.prize_current_owner)
                   }
-                > STEAL GIFT </button>
+                >
+                  {" "}
+                  STEAL GIFT{" "}
+                </button>
               </div>
             );
           })
@@ -132,8 +140,6 @@ const StealGiftStyled = styled.div`
   gap: 1rem;
   flex-wrap: wrap;
 
-
-
   .steal-gift-container {
     background-color: red;
     width: 300px;
@@ -143,7 +149,7 @@ const StealGiftStyled = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: ${pr => pr.theme.fonts.family.nicus};
+    font-family: ${(pr) => pr.theme.fonts.family.nicus};
     border-radius: 16px;
     margin-top: 1%;
   }
@@ -155,8 +161,7 @@ const StealGiftStyled = styled.div`
     align-items: center;
   }
 
-
-  .steal-prize-image{
+  .steal-prize-image {
     height: 100px;
     width: 100px;
   }
