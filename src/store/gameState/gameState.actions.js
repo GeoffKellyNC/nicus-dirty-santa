@@ -2,7 +2,7 @@ import * as gameTypes from './gameState.types';
 import * as playerTypes from '../playerState/playerState.types'
 import axios from 'axios'
 
-const USE_LOCAL = false
+const USE_LOCAL = true
 
 const START_GAME_EP =  USE_LOCAL ? 'http://localhost:9001/game/startGame' : 'https://nicus-dirty-christmas.herokuapp.com/game/startGame'
 const REJOIN_GAME_EP = USE_LOCAL ? 'http://localhost:9001/game/rejoinGame' : 'https://nicus-dirty-christmas.herokuapp.com/game/rejoinGame'

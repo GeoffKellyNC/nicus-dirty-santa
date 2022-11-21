@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as playerTypes from './playerState.types';
 
-const USE_LOCAL = false
+const USE_LOCAL = true
 
 
 const SET_PLAYER_EP = USE_LOCAL ? 'http://localhost:9001/player/setPlayer' : 'https://nicus-dirty-christmas.herokuapp.com/player/setPlayer';
