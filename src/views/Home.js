@@ -17,7 +17,7 @@ const Home = () => {
         </div>
         <div className = 'home-body'>
             <div className='game-master choice-container'>
-                <button onClick ={() => navigate('/gameboard')} className='game-master-btn choice-btn'> GAME MASTER </button>
+                <button onClick ={() => navigate('/gameboard')} className='game-master-btn choice-btn'> HOST </button>
                 <button onClick={() => navigate('/register')} className='player-btn choice-btn'> PLAYERS </button>
                 <button onClick = {() => setRejoin(!rejoin)} className = 'rejoin-btn choice-btn'> REJOIN </button>
                 {
