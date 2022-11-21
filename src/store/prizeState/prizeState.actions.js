@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as prizeTypes from './prizeState.types'
 import * as playerTypes from '../playerState/playerState.types'
 
-const USE_LOCAL = false
+const USE_LOCAL = true
 
 const SET_PRIZE_EP = USE_LOCAL ? 'http://localhost:9001/prize/setPrize' : 'https://nicus-dirty-christmas.herokuapp.com/prize/setPrize'
 const GET_ALL_PRIZES_EP = USE_LOCAL ? 'http://localhost:9001/prize/getAllprizes' : 'https://nicus-dirty-christmas.herokuapp.com/prize/getAllprizes'
@@ -10,9 +10,9 @@ const SET_PLAYER_PRIZE_EP = USE_LOCAL ? 'http://localhost:9001/prize/setPlayerPr
 const STEAL_PRIZE_EP = USE_LOCAL ? 'http://localhost:9001/prize/stealPrize' : 'https://nicus-dirty-christmas.herokuapp.com/prize/stealPrize'
 
 
-export const setPrize = ( prizeName, prizeImg, prizeValue) => async (dispatch) => {
+export const setPrize = ( prizeName, prizeImg, prizeValue, prizeDescription) => async (dispatch) => {
     try {
-        await axios.post(SET_PRIZE_EP, { data: {prizeName, prizeImg, prizeValue}})
+        await axios.post(SET_PRIZE_EP, { data: {prizeName, prizeImg, prizeValue, prizeDescription}})
 
         dispatch({
             type: prizeTypes.SET_PRIZE,
@@ -22,7 +22,8 @@ export const setPrize = ( prizeName, prizeImg, prizeValue) => async (dispatch) =
                 prize_value: prizeValue,
                 prize_current_owner: null,
                 prize_previous_owner: null,
-                prize_num_steals: null
+                prize_num_steals: null,
+                prize_description: prizeDescription
             }
         })
     } catch (error) {
@@ -68,10 +69,10 @@ export const stealPrize = (prizeId, oldPlayer, newPlayer, currentGift ) => async
     try {
 
 
-       await axios.post(STEAL_PRIZE_EP, { data: { prizeId, oldPlayer, newPlayer, currentGift}})
+        await axios.post(STEAL_PRIZE_EP, { data: { prizeId, oldPlayer, newPlayer, currentGift}})
 
 
-       
+
         dispatch({
             type: prizeTypes.SET_PLAYER_PRIZE,
             payload: { prizeId, playerId: newPlayer }

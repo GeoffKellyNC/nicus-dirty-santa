@@ -25,10 +25,10 @@ const PlayerCurrent = (props) => {
                     alt={currentPrize ? currentPrize.prize_name : null}
                 />
             </div>
-            <div className = 'player-stats'>
+            {/* <div className = 'player-stats'>
                 <span> Times Stolen From: </span>
                 <span>{playerData.player_stolen_from ? playerData.player_stolen_from : '0'}</span>
-            </div>
+            </div> */}
         </PlayerStatus>
     )
 }

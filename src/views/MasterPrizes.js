@@ -51,7 +51,8 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {...prizeActions, ...playerActions}) (MasterPrizes)
 
 const StyledMasterPrizes = styled.div`
-
+    background: rgb(47,109,211);
+    background: linear-gradient(0deg, rgba(47,109,211,1) 6%, rgba(80,148,228,1) 60%, rgba(47,109,211,1) 100%);
 
 
     .prize-list {

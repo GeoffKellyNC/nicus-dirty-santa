@@ -9,16 +9,38 @@ import styled from 'styled-components'
 const RegisterForm = (props) => {
     const { setPlayer, ioSocket } = props
     const [formValues, setFormValues] = useState({playerName: '', pin: ''})
+    const [ disabled, setDisabled ] = useState(true)
 
     const navigate = useNavigate()
 
     const onChange = (e) => {
         setFormValues({...formValues, [e.target.name]: e.target.value})
+
+        const userNameInput = document.querySelector('#player-name')
+        const pinInput = document.querySelector('#player-pin')
+
+
+        if (userNameInput.value.trim().length > 3 && pinInput.value.trim().length > 3){
+            setDisabled(false)
+            return
+        }else{
+            setDisabled(true)
+        }
     }
+
+
 
     const onSubmit = async (e) => {
         await ioSocket.emit('player-joined', {playerName: formValues.playerName})
         e.preventDefault()
+        if (formValues.playerName.length < 3){
+            alert('Player Name must be at least 3 characters')
+            return
+        }
+        if (formValues.pin.length < 4){
+            alert('Pin must be at least 4 characters')
+            return
+        }
         await setPlayer(formValues.playerName, formValues.pin)
         setFormValues({playerName: '', pin: ''})
         navigate('/playerboard')
@@ -27,6 +49,9 @@ const RegisterForm = (props) => {
 
     return (
         <Register onSubmit={(e) => onSubmit(e)}>
+            <div>
+                <p className = 'reg-text'> Enter your Player Name and a pin. Name and Pin must be at least 4 characters.</p>
+            </div>
             <input
                 type = 'text'
                 name = 'playerName'
@@ -34,6 +59,7 @@ const RegisterForm = (props) => {
                 onChange = {onChange}
                 className = 'player-name-input input'
                 placeholder='Enter Your Name'
+                id = 'player-name'
              />
              <input 
                 type = 'text'
@@ -42,8 +68,9 @@ const RegisterForm = (props) => {
                 onChange = {onChange}
                 className = 'player-pin-input input'
                 placeholder = 'Enter a 4 digit pin.'
+                id = 'player-pin'
              />
-             <button type = 'submit'>Submit</button>
+             <button disabled = {disabled} type = 'submit'>Submit</button>
         </Register>
     )
 }
@@ -81,6 +108,15 @@ const Register = styled.form`
         color: ${props => props.theme.colors.green};
         text-align: center;
         font-family: ${props => props.theme.fonts.family.nicus};
+    }
+
+    .reg-text {
+        font-family: ${props => props.theme.fonts.family.nicus};
+        font-size: ${props => props.theme.fonts.size.xlarge};
+        text-align: center;
+        color: white;
+        padding: 10px;
+
     }
 
 

@@ -16,7 +16,7 @@ import * as gameActions from './store/gameState/gameState.actions'
 
 
 
-const LOCAL = false
+const LOCAL = true
 
 
 function App (props) {

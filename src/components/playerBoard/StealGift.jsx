@@ -13,6 +13,7 @@ const StealGift = ({
 }) => {
   const [giftsToSteal, setGiftsToSteal] = useState([]);
   const [currentGift, setCurrentGift] = useState(null);
+  const [noSteal, setNoSteal] = useState(true);
 
   const getPrizeOwner = (prizeId) => {
     
@@ -28,7 +29,7 @@ const StealGift = ({
 
   useEffect(() => {
     setGiftsToSteal(
-      prizes.filter((prize) => prize.prize_current_owner != null)
+      prizes.filter((prize) => prize.prize_current_owner != null && prize.prize_num_steals < 3)
     );
     setCurrentGift(playerData.player_current_prize);
   }, [playerData.player_current_prize, prizes]);
@@ -41,11 +42,21 @@ const StealGift = ({
     return true;
   };
 
-  const handleSteal = async (giftId, oldPlayerId) => {
+  const handleSteal = async (giftId, oldPlayerId, timesStolen) => {
+    if (timesStolen > 2){
+      setNoSteal(true)
+      setTimeout(() => {
+        setNoSteal(false)
+      }, 2000);
+      return
+    }
     const newPlayerId = playerData.player_id;
     const canSteal = checkIfStealable(newPlayerId, giftId);
     if (!canSteal) {
       setStealError(true)
+      setTimeout(() => {
+        setStealError(false)
+      }, 2000);
       return;
     }
     stealToggle(false);
@@ -59,6 +70,7 @@ const StealGift = ({
       .prize_name;
 
     await ioSocket.emit('moveMadeServer', {type: 'steal', oldPlayerName, playerName: newPlayerName, giftName})
+    return;
   };
 
 
@@ -93,9 +105,12 @@ const StealGift = ({
                 <button
                   className="steal-gift-button"
                   onClick={() =>
-                    handleSteal(gift.prize_id, gift.prize_current_owner)
+                    handleSteal(gift.prize_id, gift.prize_current_owner, gift.prize_num_steals)
                   }
                 > STEAL GIFT </button>
+                {
+                  noSteal ? <span className="no-steal-text"> You can't steal this gift anymore! </span> : null
+                }
               </div>
             );
           })
@@ -159,5 +174,14 @@ const StealGiftStyled = styled.div`
   .steal-prize-image{
     height: 100px;
     width: 100px;
+  }
+
+  .no-steal-text{
+    margin: 5px;
+  
+  }
+
+  .no-gifts-text{
+    color: white;
   }
 `;

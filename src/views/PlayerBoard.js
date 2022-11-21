@@ -7,12 +7,16 @@ import * as prizeActions from '../store/prizeState/prizeState.actions'
 import * as gameActions from '../store/gameState/gameState.actions'
 import styled from 'styled-components'
 
+import GameRules from '../components/playerBoard/GameRules'
 import GameStream from '../components/playerBoard/GameStream'
 import PlayerCurrent from '../components/playerBoard/PlayerCurrent'
 import PlayerActions from '../components/playerBoard/PlayerActions.jsx'
 import Snowflake from '../components/playerBoard/Snowflake'
 
 const PlayerBoard = (props) => {
+
+    // ---- PROPS ----
+
     const { 
       playerData, 
       getAllPrizes, 
@@ -22,13 +26,18 @@ const PlayerBoard = (props) => {
       gameStatus,
       setGameData,
       setLocalCurrentTurn } = props
+    
+    // ---- END PROPS ----
 
+    // ---- STATE -----
       const [gameStatusLocal, setGameStatusLocal] = useState(localStorage.getItem('gameData') || false)
       const [moveMade, setMoveMade] = useState(false);
       const [playerMove, setPlayerMove] = useState({ player: "", prize: "" });
       const [playerSteal, setPlayerSteal] = useState({ player: '', oldPlayer: '', prize: '' });
       const [stealError, setStealError] = useState(false);
       const [stealMade, setStealMade] = useState(false);
+
+    // ---- END STATE ----
 
     const nav = useNavigate()
 
@@ -76,6 +85,7 @@ const PlayerBoard = (props) => {
         })
 
         ioSocket.on("giftChosen", (data) => {
+          if(moveMade) setMoveMade(false)
           if(stealMade) setStealMade(false)
           setPlayerMove({
             ...playerMove,
@@ -87,6 +97,7 @@ const PlayerBoard = (props) => {
 
         ioSocket.on('giftStolen', (data) => {
           if(moveMade) setMoveMade(false)
+          if(stealMade) setStealMade(false)
           setPlayerSteal({
             ...playerSteal,
             player: data.playerName,
@@ -118,8 +129,8 @@ const PlayerBoard = (props) => {
     <PlayerBoardStyled>
       <Snowflake />
       <div className='nav-controls'>
-        <button onClick={() => nav('/masterPrizes')}> View Prizes </button>
-        <button onClick = {() => nav('/')}> Home </button>
+        <button className = 'nav-control nav-prize' onClick={() => nav('/masterPrizes')}> View Prizes </button>
+        <button className = 'nav-control nav-home' onClick = {() => nav('/')}> Home </button>
       </div>
       <div className='player-board-header'>
         <span> Welcome {playerData.player_name} to Nicus Dirty Santa</span>
@@ -146,6 +157,7 @@ const PlayerBoard = (props) => {
         )
       }
       <PlayerActions setStealError = { setStealError } />
+      <GameRules />
 
     </PlayerBoardStyled>
   )
@@ -210,6 +222,23 @@ const PlayerBoardStyled = styled.div`
 
   .game-active {
     color: ${pr => pr.theme.fonts.color.green};
+  }
+
+  .nav-control {
+    background: ${pr => pr.theme.colors.red};
+    color: white;
+    font-family: ${pr => pr.theme.fonts.family.nicus};
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+    width: 100px;
+  }
+
+  .nav-controls {
+    display: flex;
+    justify-content: space-around;
+    width: 20%;
+
   }
 
 
